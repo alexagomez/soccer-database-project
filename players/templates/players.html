@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+{% load players_extras %}
+<html lang="en">
+<h1>Players</h1>
+<table>
+    <tr>
+        {% for column in columns %}
+            <td>{{column}}</td>
+        {% endfor %}
+    </tr>
+    {% for player in players %}
+        <tr>
+            {% for column in columns %}
+                <td>{% nested_get player column %}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+</html>

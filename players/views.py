@@ -1,17 +1,22 @@
 from django.db import connection
+from django.views.generic import ListView
 
-from rest_framework import status
-from rest_framework.response import Response
+from django.shortcuts import get_object_or_404, render
 
-def my_custom_sql():
+
+def do_sql(query):
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM registered_users;")
-        entries = cursor.fetchall()
-        for entry in entries:
-            print(entry)
+        cursor.execute(query)
+        columns = [col[0] for col in cursor.description]
+        return columns, [
+            dict(zip(columns, row))
+            for row in cursor.fetchall()
+        ]
 
-    return None
 
-def return_404(self):
-    my_custom_sql()
-    return Response(status=status.HTTP_404_NOT_FOUND, data={})
+def view_players(request):
+    columns, players = do_sql("SELECT * FROM players;")
+    for column in columns:
+        print(column)
+    context = {'players': players, 'columns': columns}
+    return render(request, 'players.html', context)
