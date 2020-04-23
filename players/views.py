@@ -3,7 +3,7 @@ from django.db import connection
 from django.shortcuts import get_object_or_404, render
 
 player_fields = ['long_name', 'age', 'dob', 'height_cm', 'weight_kg', 'nationality', 'passing', 'defending', 'shooting',
-                 'dribbling', 'pace', 'overall', 'team_jersey_numbe']
+                 'dribbling', 'pace', 'overall', 'team_jersey_number', 'preferred_foot', 'wage_eur']
 
 
 def do_sql(query, params=[]):
@@ -22,7 +22,6 @@ def view_players(request):
     first_param = True
     for field in player_fields:
         param = request.GET.get(field)
-        print("field=", field, "param=", param)
         if param is not None:
             if first_param:
                 query += " WHERE"
@@ -35,7 +34,5 @@ def view_players(request):
     query += ";"
 
     columns, players = do_sql(query, params)
-    for column in columns:
-        print(column)
-    context = {'players': players, 'columns': columns}
+    context = {'players': players, 'columns': columns, 'params': request.GET}
     return render(request, 'players.html', context)

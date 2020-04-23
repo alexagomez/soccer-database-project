@@ -1,8 +1,28 @@
 <!DOCTYPE html>
 {% load players_extras %}
+<script>
+    function searchRedirect() {
+        var columns = ['long_name', 'age', 'dob', 'height_cm', 'weight_kg', 'nationality', 'passing', 'defending',
+                       'shooting', 'dribbling', 'pace', 'overall', 'team_jersey_number', 'preferred_foot', 'wage_eur'];
+        var redirectParams = [];
+        for (var i = 0; i < columns.length; i++) {
+            var searchVal = document.getElementById(columns[i]).value;
+            if (searchVal != "") {
+                redirectParams.push(columns[i] + "=" + searchVal);
+            }
+        }
+        document.location.search = redirectParams.join("&");
+    }
+</script>
 <html lang="en">
 <h1>Players</h1>
 <table>
+    <tr>
+        {% for column in columns %}
+            <input type="text" id="{{column}}" name="{{column}}" placeholder="{{column}}" size="10" value="{% dict_get params column %}">
+        {% endfor %}
+    </tr>
+    <button id="btn-search" onclick="searchRedirect()">Search</button>
     <tr>
         {% for column in columns %}
             <td>{{column}}</td>
@@ -11,7 +31,7 @@
     {% for player in players %}
         <tr>
             {% for column in columns %}
-                <td>{% nested_get player column %}</td>
+                <td>{% dict_get player column %}</td>
             {% endfor %}
         </tr>
     {% endfor %}
