@@ -1,4 +1,5 @@
 from django.db import connection
+from urllib.parse import unquote
 
 from django.shortcuts import get_object_or_404, render, redirect
 
@@ -74,15 +75,14 @@ def edit_player(request):
 
     if request.method == 'POST':
         query = "UPDATE players"
-        long_name = request.POST.get("long_name")
-        post_copy = request.POST.copy()
-        post_copy.pop("long_name")
+        long_name = unquote(str(request.get_full_path()).split("=")[1])
+        new_name = request.POST.get('long_name')
 
-        fields, params = get_fields_and_params(post_copy)
+        fields, params = get_fields_and_params(request.POST)
 
         if len(fields) != 0:
             query += " SET " + ", ".join(fields) + " WHERE long_name = %s;"
             params.append(long_name)
             do_sql(query, params)
 
-        return redirect('/players/edit?long_name='+long_name)
+        return redirect('/players/edit?long_name='+new_name)

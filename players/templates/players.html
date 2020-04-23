@@ -35,7 +35,14 @@
     {% for player in players %}
         <tr>
             {% for column in columns %}
-                <td>{% dict_get player column %}</td>
+                {% with name='long_name' %}
+                    {% if column == name %}
+                        <td><a href="/players/edit?long_name={% dict_get player column %}">{% dict_get player column %}</a></td>
+                    {% endif %}
+                    {% if column != name %}
+                        <td>{% dict_get player column %}</td>
+                    {% endif %}
+                {% endwith %}
             {% endfor %}
         </tr>
     {% endfor %}
