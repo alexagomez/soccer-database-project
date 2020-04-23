@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+{% load players_extras %}
+<html lang="en">
+<h1>Edit Player</h1>
+{% with name='long_name' %}
+<form name="editPlayer" method="POST" action="/players/edit?long_name={% dict_get params name %}"> {% csrf_token %}
+    {% for column in columns %}
+        <label for="{{column}}">{{column}}</label>
+        <input type="text" id="{{column}}" name="{{column}}" placeholder="{{column}}" size="10" value="{% dict_get player column %}">
+        <br>
+    {% endfor %}
+    <a href="javascript:document.editPlayer.submit()">Submit</a>
+</form>
+{% endwith %}
+</html>
