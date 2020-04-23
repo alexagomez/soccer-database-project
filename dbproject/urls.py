@@ -15,8 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from users.views import SignUp
+from django.conf.urls.static import static
+from django.conf import settings
+from users.views import login
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('test/', include('players.urls'))
+    path('test/', include('players.urls')),
+    path('users/', include('users.urls')),
+    path("", login, name="login"),
 ]
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

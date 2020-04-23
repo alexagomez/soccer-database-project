@@ -15,7 +15,11 @@
     }
 </script>
 <html lang="en">
+{% if request.session.user %}
+    <h1>hello, {{request.session.user}}</h1>
+{% endif %}
 <h1>Players</h1>
+
 <table>
     <tr>
         {% for column in columns %}

@@ -1,0 +1,19 @@
+{% load static %}
+
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/signup.css' %}">
+
+    
+    <div class="container">
+    <h1 class="heading">Sign Up</h1><br>
+<form method="post">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+</form>
+<div class="login-help">
+    <div class="text-center">Already have an account? <a href="{% url 'loginform' %}">Log in</a></div>
+</div>
+</div>

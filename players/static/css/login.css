@@ -1,0 +1,25 @@
+.container {
+    display: flex;
+    flex: 1;
+    margin-top: 20vh;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color:whitesmoke;
+    height: 50vh;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    border-radius: 0.5rem
+}
+.heading {
+    align-self: center;
+    font-weight: bold;
+    font-size: 40px;
+}
+
+.labelstyle{
+    font-size: 20px;
+}
+
+.text-center{
+    font-size: large;
+}
