@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+{% load players_extras %}
+<html lang="en">
+<h1>Add Player</h1>
+<form name="addPlayer" method="POST" action="/players/add"> {% csrf_token %}
+    {% for column in columns %}
+        <label for="{{column}}">{{column}}</label>
+        <input type="text" id="{{column}}" name="{{column}}" placeholder="{{column}}" size="10">
+        <br>
+    {% endfor %}
+    <a href="javascript:document.addPlayer.submit()">Submit</a>
+</form>
+</html>

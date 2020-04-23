@@ -1,4 +1,5 @@
 from django.db import connection
+from django.db.utils import OperationalError
 from urllib.parse import unquote
 
 from django.shortcuts import get_object_or_404, render, redirect
@@ -9,7 +10,11 @@ player_fields = ['long_name', 'age', 'dob', 'height_cm', 'weight_kg', 'nationali
 
 def do_sql(query, params=[]):
     with connection.cursor() as cursor:
-        cursor.execute(query, params)
+        try:
+            cursor.execute(query, params)
+        except OperationalError:
+            return False
+
         if query.find("SELECT") != -1:
             columns = [col[0] for col in cursor.description]
             return columns, [
@@ -17,7 +22,7 @@ def do_sql(query, params=[]):
                 for row in cursor.fetchall()
             ]
         else:
-            return None
+            return True
 
 
 def get_fields_and_params(request_dict):
@@ -55,7 +60,7 @@ def view_players(request):
     when user clicks submit send all of the values in the update statement. Name cannot be changed.
 '''
 def edit_player(request):
-    if request.method == 'GET':
+    if request.method == 'GET':  # this is when the user clicks on a player's name from the players view
         player_name = request.GET.get('long_name', None)
         if player_name is None:
             context = {'player': {'long_name': 'None'}}
@@ -73,7 +78,7 @@ def edit_player(request):
         context = {'player': player[0], 'columns': columns, 'params': request.GET}
         return render(request, 'edit_player.html', context)
 
-    if request.method == 'POST':
+    if request.method == 'POST':  # this is when they click submit on an edit
         query = "UPDATE players"
         long_name = unquote(str(request.get_full_path()).split("=")[1])
         new_name = request.POST.get('long_name')
@@ -86,3 +91,21 @@ def edit_player(request):
             do_sql(query, params)
 
         return redirect('/players/edit?long_name='+new_name)
+
+
+def add_player(request):
+    if request.method == 'GET':
+        context = {'player': 'None', 'columns': player_fields}
+        return render(request, 'add_player.html', context)
+
+    if request.method == 'POST':
+        query = 'INSERT INTO players VALUES ('
+
+        fields, params = get_fields_and_params(request.POST)
+
+        placeholders = ["%s"] * len(params)
+        query += ", ".join(placeholders) + ");"
+        if do_sql(query, params):
+            return redirect('/players/view?long_name='+request.POST.get('long_name'))
+        else:
+            return redirect('/players/add')
