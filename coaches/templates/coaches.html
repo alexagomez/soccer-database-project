@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+{% load coaches_extras %}
+<script>
+    function searchRedirect() {
+        var columns = ['full_name','nationality','years_experience','num_championships','num_wins','num_losses','num_ties'];
+        var redirectParams = [];
+        for (var i = 0; i < columns.length; i++) {
+            var searchVal = document.getElementById(columns[i]).value;
+            if (searchVal != "") {
+                redirectParams.push(columns[i] + "=" + searchVal);
+            }
+        }
+        document.location.search = redirectParams.join("&");
+    }
+</script>
+<html lang="en">
+{% if request.session.user %}
+    <h1>hello, {{request.session.user}}</h1>
+{% endif %}
+<h1>Coaches</h1>
+{% with primary_key='full_name' %}
+{% with table_name='coaches' %}
+<table>
+    <tr>
+        {% for column in columns %}
+            <input type="text" id="{{column}}" name="{{column}}" placeholder="{{column}}" size="10" value="{% dict_get params column %}">
+        {% endfor %}
+    </tr>
+    <button id="btn-search" onclick="searchRedirect()">Search</button>
+    <tr>
+        {% for column in columns %}
+            <td>{{column}}</td>
+        {% endfor %}
+    </tr>
+    {% for record in records %}
+        <tr>
+            {% for column in columns %}
+                {% if column == primary_key %}
+                    <td><a href="/{{table_name}}/edit?{{primary_key}}={% dict_get record column %}">{% dict_get record column %}</a></td>
+                {% endif %}
+                {% if column != primary_key %}
+                    <td>{% dict_get record column %}</td>
+                {% endif %}
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+{% endwith %}
+{% endwith %}
+</html>
