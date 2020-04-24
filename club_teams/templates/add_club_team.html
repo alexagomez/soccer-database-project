@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+{% load club_teams_extras %}
+<html lang="en">
+<h1>Add Player</h1>
+{% with primary_key='name' %}
+{% with table_name='club_teams' %}
+<form name="add{{table_name}}" method="POST" action="/{{table_name}}/add"> {% csrf_token %}
+    {% for column in columns %}
+        <label for="{{column}}">{{column}}</label>
+        <input type="text" id="{{column}}" name="{{column}}" placeholder="{{column}}" size="10">
+        <br>
+    {% endfor %}
+    <a href="javascript:document.add{{table_name}}.submit()">Submit</a>
+</form>
+{% endwith %}
+{% endwith %}
+</html>

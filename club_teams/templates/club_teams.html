@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-{% load players_extras %}
+{% load club_teams_extras %}
 <script>
     function searchRedirect() {
-        var columns = ['long_name', 'age', 'dob', 'height_cm', 'weight_kg', 'nationality', 'passing', 'defending',
-                       'shooting', 'dribbling', 'pace', 'overall', 'team_jersey_number', 'preferred_foot', 'wage_eur'];
+        var columns = ['name', 'payroll', 'league'];
         var redirectParams = [];
         for (var i = 0; i < columns.length; i++) {
             var searchVal = document.getElementById(columns[i]).value;
@@ -18,9 +17,9 @@
 {% if request.session.user %}
     <h1>hello, {{request.session.user}}</h1>
 {% endif %}
-<h1>Players</h1>
-{% with primary_key='long_name' %}
-{% with table_name='players' %}
+<h1>Club Teams</h1>
+{% with primary_key='name' %}
+{% with table_name='club_teams' %}
 <table>
     <tr>
         {% for column in columns %}
