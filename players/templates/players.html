@@ -19,7 +19,8 @@
     <h1>hello, {{request.session.user}}</h1>
 {% endif %}
 <h1>Players</h1>
-
+{% with primary_key='long_name' %}
+{% with table_name='players' %}
 <table>
     <tr>
         {% for column in columns %}
@@ -32,19 +33,19 @@
             <td>{{column}}</td>
         {% endfor %}
     </tr>
-    {% for player in players %}
+    {% for record in records %}
         <tr>
             {% for column in columns %}
-                {% with name='long_name' %}
-                    {% if column == name %}
-                        <td><a href="/players/edit?long_name={% dict_get player column %}">{% dict_get player column %}</a></td>
-                    {% endif %}
-                    {% if column != name %}
-                        <td>{% dict_get player column %}</td>
-                    {% endif %}
-                {% endwith %}
+                {% if column == primary_key %}
+                    <td><a href="/{{table_name}}/edit?long_name={% dict_get record column %}">{% dict_get record column %}</a></td>
+                {% endif %}
+                {% if column != primary_key %}
+                    <td>{% dict_get record column %}</td>
+                {% endif %}
             {% endfor %}
         </tr>
     {% endfor %}
 </table>
+{% endwith %}
+{% endwith %}
 </html>

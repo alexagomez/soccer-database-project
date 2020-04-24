@@ -2,14 +2,16 @@
 {% load players_extras %}
 <html lang="en">
 <h1>Edit Player</h1>
-{% with name='long_name' %}
-<form name="editPlayer" method="POST" action="/players/edit?long_name={% dict_get params name %}"> {% csrf_token %}
+{% with primary_key='long_name' %}
+{% with table_name='players' %}
+<form name="edit{{table_name}}" method="POST" action="/{{table_name}}/edit?{{primary_key}}={% dict_get params primary_key %}"> {% csrf_token %}
     {% for column in columns %}
         <label for="{{column}}">{{column}}</label>
-        <input type="text" id="{{column}}" name="{{column}}" placeholder="{{column}}" size="10" value="{% dict_get player column %}">
+        <input type="text" id="{{column}}" name="{{column}}" placeholder="{{column}}" size="10" value="{% dict_get record column %}">
         <br>
     {% endfor %}
-    <a href="javascript:document.editPlayer.submit()">Submit</a>
+    <a href="javascript:document.edit{{table_name}}.submit()">Submit</a>
 </form>
+{% endwith %}
 {% endwith %}
 </html>
