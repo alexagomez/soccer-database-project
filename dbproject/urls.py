@@ -23,6 +23,7 @@ from users.views import login
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('club_teams/', include('club_teams.urls')),
+    path('coaches/', include('coaches.urls')),
     path('players/', include('players.urls')),
     path('users/', include('users.urls')),
     path("", login, name="login"),
