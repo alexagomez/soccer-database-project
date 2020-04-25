@@ -46,7 +46,7 @@ def view_players(request):
     """
         Searches for all records based on query params. returns all records if no query params are present.
     """
-    query = "SELECT * FROM " + table_name+ " NATURAL JOIN player_position NATURAL JOIN plays_or_coaches_for"
+    query = "SELECT * FROM " + table_name
     fields, params = get_fields_and_params(request.GET)
 
     if len(fields) != 0:

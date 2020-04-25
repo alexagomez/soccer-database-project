@@ -112,10 +112,10 @@ def add_club_team(request):
             return redirect('/' + table_name + '/add')
 
 def add_favorite_team(request, name):
-        query = 'INSERT INTO favorite_players VALUES (%s, %s);'
+        query = 'INSERT into favorite_teams (username, team_name) VALUES (%s, %s);'
         params = (request.session["user"], name)
         print('here')
         if do_sql(query, params):
             return redirect(reverse('view_club_teams'))
         else:
-            return redirect(reverse('add_favorite'))
+            return redirect(reverse('view_club_teams'))

@@ -1,3 +1,8 @@
+{% load static %}
+
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<!-- <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}"> -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <!DOCTYPE html>
 {% load club_teams_extras %}
 <script>
@@ -20,7 +25,7 @@
 <h1>Club Teams</h1>
 {% with primary_key='name' %}
 {% with table_name='club_teams' %}
-<table>
+<table class="table">
     <tr>
         {% for column in columns %}
             <input type="text" id="{{column}}" name="{{column}}" placeholder="{{column}}" size="10" value="{% dict_get params column %}">

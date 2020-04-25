@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'coaches',
     'players',
     'users',
+    'favorite_players',
+    'favorite_teams',
     'crispy_forms'
 ]
 

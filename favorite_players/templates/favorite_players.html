@@ -5,10 +5,10 @@
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 
 <!DOCTYPE html>
-{% load coaches_extras %}
+{% load favorite_players_extras %}
 <script>
     function searchRedirect() {
-        var columns = ['full_name','nationality','years_experience','num_championships','num_wins','num_losses','num_ties'];
+        var columns = ['username', 'player_name'];
         var redirectParams = [];
         for (var i = 0; i < columns.length; i++) {
             var searchVal = document.getElementById(columns[i]).value;
@@ -23,9 +23,9 @@
 {% if request.session.user %}
     <h1>hello, {{request.session.user}}</h1>
 {% endif %}
-<h1>Coaches</h1>
-{% with primary_key='full_name' %}
-{% with table_name='coaches' %}
+<h1>Players</h1>
+{% with primary_key='username' %}
+{% with table_name='favorite_players' %}
 <table class="table">
     <tr>
         {% for column in columns %}
@@ -41,13 +41,9 @@
     {% for record in records %}
         <tr>
             {% for column in columns %}
-                {% if column == primary_key %}
-                    <td><a href="/{{table_name}}/edit?{{primary_key}}={% dict_get record column %}">{% dict_get record column %}</a></td>
-                {% endif %}
-                {% if column != primary_key %}
-                    <td>{% dict_get record column %}</td>
-                {% endif %}
+                <td>{% dict_get record column %}</td>
             {% endfor %}
+            <td><a class="btn btn-info" href="/{{table_name}}/delete/{% dict_get record 'player_name' %}">delete from favorites</a></td>
         </tr>
     {% endfor %}
 </table>
