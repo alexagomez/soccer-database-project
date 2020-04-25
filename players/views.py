@@ -9,6 +9,17 @@ primary_key = 'long_name'
 table_columns = ['long_name', 'age', 'dob', 'height_cm', 'weight_kg', 'nationality', 'passing', 'defending', 'shooting',
                  'dribbling', 'pace', 'overall', 'team_jersey_number', 'preferred_foot', 'wage_eur']
 
+alt_tables = {
+    'player_positions': {
+        'primary_key': 'long_name',
+        'table_columns': ['long_name', 'position']
+    },
+    'plays_or_coaches_for': {
+        'primary_key': 'long_name',
+        'table_columns': ['long_name', 'club_team', 'national_team']
+    }
+}
+
 
 def do_sql(query, params=[]):
     with connection.cursor() as cursor:
@@ -44,7 +55,7 @@ def view_players(request):
     """
         Searches for all records based on query params. returns all records if no query params are present.
     """
-    query = "SELECT * FROM " + table_name
+    query = "SELECT * FROM " + table_name + ' NATURAL JOIN ' + ' NATURAL JOIN '.join(alt_tables.keys())
     fields, params = get_fields_and_params(request.GET)
 
     if len(fields) != 0:
