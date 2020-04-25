@@ -54,6 +54,12 @@ INSTALLED_APPS = [
     'crispy_forms'
 ]
 
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+]
 
 CRISPY_TEMPLATE_PACK= 'bootstrap4'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True

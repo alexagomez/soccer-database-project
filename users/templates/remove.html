@@ -6,7 +6,8 @@
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 
     <div class="container">
-        <h1 class="heading">Log In</h1><br>
+        <h1 class="heading">Remove Account</h1><br>
+        <h3>Enter username and password to verify account removal</h5><br>
         <form method="post">
             {% csrf_token %}
             {% for field in form %}
@@ -15,10 +16,10 @@
                 {{ field }}
             </div>
             {% endfor %}
-            <button type="submit" class="btn btn-primary btn-block" >Log In</button>
+            <button type="submit" class="btn btn-primary btn-block" >Remove Account</button>
         </form>
         
         <div class="login-help">
-            <div class="text-center">Don't have an account? <a href="{% url 'signup' %}">Sign Up</a></div>
+            <div class="text-center">Second thoughts?<a href="{% url 'login' %}">Log in</a></div>
         </div>
 </div>
