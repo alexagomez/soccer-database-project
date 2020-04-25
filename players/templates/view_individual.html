@@ -8,7 +8,7 @@
 {% load players_extras %}
 <script>
     function searchRedirect() {
-        var columns = ['long_name', 'age', 'dob', 'height_cm', 'weight_kg', 'nationality', 'passing', 'defending',
+        var columns = ['age', 'dob', 'height_cm', 'weight_kg', 'nationality', 'passing', 'defending',
                        'shooting', 'dribbling', 'pace', 'overall', 'team_jersey_number', 'preferred_foot', 'wage_eur',
                        'position', 'club_team', 'national_team'];
         var redirectParams = [];
@@ -25,9 +25,10 @@
 {% if request.session.user %}
     <h1>hello, {{request.session.user}}</h1>
 {% endif %}
-<h1>Players</h1>
 {% with primary_key='long_name' %}
 {% with table_name='players' %}
+<h1>{% dict_get record primary_key %}</h1>
+<a class="btn btn-info" href="/{{table_name}}/edit?{{primary_key}}={% dict_get record primary_key %}">Edit Player</a><br>
 <table class="table">
     <tr>
         {% for column in columns %}
@@ -37,22 +38,18 @@
     <button id="btn-search" onclick="searchRedirect()">Search</button>
     <tr>
         {% for column in columns %}
-            <td>{{column}}</td>
+            {% if column != primary_key %}
+                <td>{{column}}</td>
+            {% endif %}
         {% endfor %}
     </tr>
-    {% for record in records %}
-        <tr>
-            {% for column in columns %}
-                {% if column == primary_key %}
-                    <td><a href="/{{table_name}}/view_individual?{{primary_key}}={% dict_get record column %}">{% dict_get record column %}</a></td>
-                {% endif %}
-                {% if column != primary_key %}
-                    <td>{% dict_get record column %}</td>
-                {% endif %}
-            {% endfor %}
-            <td><a class="btn btn-info" href="/{{table_name}}/favorite/{% dict_get record 'long_name' %}">add to favorites</a></td>
-        </tr>
-    {% endfor %}
+    <tr>
+        {% for column in columns %}
+            {% if column != primary_key %}
+                <td>{% dict_get record column %}</td>
+            {% endif %}
+        {% endfor %}
+    </tr>
 </table>
 {% endwith %}
 {% endwith %}

@@ -101,6 +101,40 @@ def view_players(request):
     return render(request, table_name + '.html', context)
 
 
+def view_individual(request):
+    """
+        Gives a view of the person's full set of attributes
+    """
+    fields_and_params = get_fields_and_params(request.GET)
+    pk_val_query = "SELECT " + primary_key + " FROM " + table_name + ' NATURAL JOIN ' + ' NATURAL JOIN '.join(
+        alt_tables.keys())
+
+    if len(fields_and_params) != 0:
+        pk_val_query += " WHERE " + " AND ".join(fields_and_params.keys())
+    pk_val_query += ";"
+    pk, pk_vals = do_sql(pk_val_query, fields_and_params.values())
+
+    player_name = request.GET.get(primary_key, None)
+    if player_name is None:
+        context = {'record': {primary_key: 'None'}}
+        return render(request, 'edit_player.html', context)
+
+    query = "SELECT * FROM " + table_name + ' NATURAL JOIN ' + ' NATURAL JOIN '.join(alt_tables.keys())
+    fields_and_params = get_fields_and_params(request.GET)
+
+    if len(fields_and_params) != 0:
+        query += " WHERE " + " AND ".join(fields_and_params.keys())
+    query += ";"
+
+    columns, record = do_sql(query, fields_and_params.values())
+    record = combine_multi_values(record, pk_vals, 'position')
+
+    context = {'record': record[0], 'columns': columns, 'params': request.GET}
+    return render(request, 'view_individual.html', context)
+
+
+
+
 def edit_player(request):
     """
         Query parameter will just be the player's name. We will look up original values to populate current view and then
@@ -160,7 +194,7 @@ def edit_player(request):
                     all_performed = False
 
             if all_performed:
-                return redirect('/' + table_name + '/view?' + primary_key + '=' + new_pk_val)
+                return redirect('/' + table_name + '/view_individual?' + primary_key + '=' + new_pk_val)
 
         return redirect('/' + table_name + '/edit?' + primary_key + '=' + old_pk_val)
 
@@ -193,6 +227,7 @@ def add_player(request):
             return redirect('/' + table_name + '/view?' + primary_key + '=' + request.POST.get(primary_key))
         else:
             return redirect('/' + table_name + '/add')
+
 
 def add_favorite_player(request, long_name):
         query = 'INSERT INTO favorite_players VALUES (%s, %s);'
