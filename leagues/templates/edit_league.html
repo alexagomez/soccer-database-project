@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+{% load leagues_extras %}
+<html lang="en">
+<h1>Edit League</h1>
+{% with primary_key='league_name' %}
+{% with table_name='leagues' %}
+<form name="edit{{table_name}}" method="POST" action="/{{table_name}}/edit?{{primary_key}}={% dict_get params primary_key %}"> {% csrf_token %}
+    {% for column in columns %}
+        <label for="{{column}}">{{column}}</label>
+        <input type="text" id="{{column}}" name="{{column}}" placeholder="{{column}}" size="10" value="{% dict_get record column %}">
+        <br>
+    {% endfor %}
+    <a href="javascript:document.edit{{table_name}}.submit()">Submit</a>
+</form>
+{% endwith %}
+{% endwith %}
+</html>

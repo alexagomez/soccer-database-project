@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'users',
     'favorite_players',
     'favorite_teams',
+    'leagues',
     'crispy_forms'
 ]
 
