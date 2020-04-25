@@ -5,6 +5,8 @@
 __pycache__
 db.sqlite3
 media
+**/migrations/**
+**/__pycache__/**
 
 # Backup files # 
 *.bak 
@@ -32,6 +34,3 @@ media
 # Python # 
 *.py[cod] 
 *$py.class 
-dbproject/__pycache__/settings.cpython-36.pyc
-players/__pycache__/urls.cpython-36.pyc
-players/__pycache__/views.cpython-36.pyc
