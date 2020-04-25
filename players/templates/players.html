@@ -1,3 +1,9 @@
+{% load static %}
+
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<!-- <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}"> -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
 <!DOCTYPE html>
 {% load players_extras %}
 <script>
@@ -21,7 +27,7 @@
 <h1>Players</h1>
 {% with primary_key='long_name' %}
 {% with table_name='players' %}
-<table>
+<table class="table">
     <tr>
         {% for column in columns %}
             <input type="text" id="{{column}}" name="{{column}}" placeholder="{{column}}" size="10" value="{% dict_get params column %}">
@@ -43,6 +49,7 @@
                     <td>{% dict_get record column %}</td>
                 {% endif %}
             {% endfor %}
+            <td><a class="btn btn-info" href="/{{table_name}}/favorite/{% dict_get record 'long_name' %}">add to favorites</a></td>
         </tr>
     {% endfor %}
 </table>

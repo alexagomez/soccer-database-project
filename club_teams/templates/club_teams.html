@@ -42,6 +42,7 @@
                     <td>{% dict_get record column %}</td>
                 {% endif %}
             {% endfor %}
+            <td><a class="btn btn-info" href="/{{table_name}}/favorite/{% dict_get record 'name' %}">add to favorites</a></td>
         </tr>
     {% endfor %}
 </table>

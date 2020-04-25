@@ -39,7 +39,7 @@ def logout(request):
 
 class SignUp(FormView):
     form_class = RegisterForm
-    success_url = '/test/test'
+    success_url = '/players/view'
     template_name = 'signup.html'
 
     def form_valid(self, form):
@@ -60,7 +60,7 @@ class SignUp(FormView):
 
 class LogIn(FormView):
     form_class = LogInForm
-    success_url = '/test/test'
+    success_url = '/players/view'
     template_name = 'login.html'
 
     def form_valid(self, form):

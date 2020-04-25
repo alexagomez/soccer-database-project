@@ -1,6 +1,8 @@
 from django.db import connection
 from django.db.utils import OperationalError
 from urllib.parse import unquote
+from django.urls import reverse_lazy, reverse
+from django.views.generic import FormView
 
 from django.shortcuts import get_object_or_404, render, redirect
 
@@ -44,7 +46,7 @@ def view_players(request):
     """
         Searches for all records based on query params. returns all records if no query params are present.
     """
-    query = "SELECT * FROM " + table_name
+    query = "SELECT * FROM " + table_name+ " NATURAL JOIN player_position NATURAL JOIN plays_or_coaches_for"
     fields, params = get_fields_and_params(request.GET)
 
     if len(fields) != 0:
@@ -111,3 +113,12 @@ def add_player(request):
             return redirect('/' + table_name + '/view?' + primary_key + '=' + request.POST.get(primary_key))
         else:
             return redirect('/' + table_name + '/add')
+
+def add_favorite_player(request, long_name):
+        query = 'INSERT INTO favorite_players VALUES (%s, %s);'
+        params = (request.session["user"], long_name)
+        print('here')
+        if do_sql(query, params):
+            return redirect(reverse('view_players'))
+        else:
+            return redirect(reverse('add_favorite'))

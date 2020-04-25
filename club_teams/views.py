@@ -1,7 +1,7 @@
 from django.db import connection
 from django.db.utils import OperationalError
 from urllib.parse import unquote
-
+from django.urls import reverse_lazy, reverse
 from django.shortcuts import get_object_or_404, render, redirect
 
 table_name = 'club_teams'
@@ -110,3 +110,12 @@ def add_club_team(request):
             return redirect('/' + table_name + '/view?' + primary_key + '=' + request.POST.get(primary_key))
         else:
             return redirect('/' + table_name + '/add')
+
+def add_favorite_team(request, name):
+        query = 'INSERT INTO favorite_players VALUES (%s, %s);'
+        params = (request.session["user"], name)
+        print('here')
+        if do_sql(query, params):
+            return redirect(reverse('view_club_teams'))
+        else:
+            return redirect(reverse('add_favorite'))
