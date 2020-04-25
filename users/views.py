@@ -8,6 +8,8 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.db import connection
 from django.views.generic import ListView
 from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib import messages
 
 def do_sql(query, params=[]):
     with connection.cursor() as cursor:
@@ -46,7 +48,8 @@ def logout(request):
         del request.session['user']
         return HttpResponseRedirect(reverse("loginform"))
     except KeyError:
-        return HttpResponseRedirect(reverse('signupform'))
+        messages.error(request, 'You must be logged in to log out!')
+        return redirect('loginform')
 
 class SignUp(FormView):
     form_class = RegisterForm
@@ -59,15 +62,15 @@ class SignUp(FormView):
         last = self.request.POST['last_name']
         email = self.request.POST['email']
         password = self.request.POST['password1']
-        hashed_passwd = make_password(password, None, 'pbkdf2_sha256')
+        hashed_passwd = make_password(password)
         vals = (username, first, last, email, hashed_passwd)
         try:
             do_sql("INSERT into registered_users (username, first_name, last_name, email, password) VALUES(%s, %s, %s, %s, %s);", vals)
             self.request.session['user'] = username
             return super(SignUp, self).form_valid(form)
         except:
-            form.add_error(field='username', error='Invalid password for this username')
-            return HttpResponseRedirect(reverse('signup')) 
+            messages.error(self.request, 'Signup failed, please try again')
+            return redirect('signup')
 
 class LogIn(FormView):
     form_class = LogInForm
@@ -78,13 +81,17 @@ class LogIn(FormView):
         username = self.request.POST['username']
         password = self.request.POST['password1']
         columns, hashed = do_sql_return(f"Select password From registered_users Where username='{username}';")
-        if(check_password(password, hashed[0]["password"]), None, 'pbkdf2_sha256'):
-            print('success')
-            self.request.session['user'] = username
-            return super(LogIn, self).form_valid(form)
-        else:
-            form.add_error(field='password1', error='Invalid password for this username')
-            return HttpResponseRedirect(reverse('login')) 
+        try:
+            if(check_password(password, hashed[0]["password"])):
+                print('success')
+                self.request.session['user'] = username
+                return super(LogIn, self).form_valid(form)
+            else:
+                messages.error(self.request, 'Failed to login! Password is invalid')
+                return HttpResponseRedirect(reverse('login')) 
+        except:
+            messages.error(self.request, 'Failed to login! Username is invalid')
+            return HttpResponseRedirect(reverse('login'))
 
 class RemoveAccount(FormView):
     form_class = RemoveForm
@@ -118,4 +125,5 @@ class RemoveAccount(FormView):
                 print('failed at remove players')
                 return HttpResponseRedirect(reverse('remove'))
         else:
-            return HttpResponseRedirect(reverse('remove')) 
+            messages.error(self.request, 'Failed to remove account! Please try again with valid credentials')
+            return redirect('remove')

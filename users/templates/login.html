@@ -4,8 +4,40 @@
 <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    {% for message in messages %}
+    {% if 'success' in message.tags %}
 
+    <div class="alert alert-success">
+        <a class="close" href="{% url 'view_favorite_teams' %}" data-dismiss="alert">×</a>
+
+            {{ message }}
+
+    </div>
+{% endif %}
+{% endfor %}
+
+{% for message in messages %}
+{% if 'error' in message.tags %}
+    <div class="alert alert-danger">
+        <a class="close" href="{% url 'view_favorite_players' %}" data-dismiss="alert">×</a>
+
+            {{ message }}
+
+    </div>
+{% endif %}
+{% endfor %}
+{% for message in messages %}
+{% if 'info' in message.tags %}
+    <div class="alert alert-info">
+        <a class="close" href="{% url 'view_favorite_players' %}" data-dismiss="alert">×</a>
+
+            {{ message }}
+
+    </div>
+{% endif %}
+    {% endfor %}
     <div class="container">
+        
         <h1 class="heading">Log In</h1><br>
         <form method="post">
             {% csrf_token %}

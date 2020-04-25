@@ -5,6 +5,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import FormView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib import messages
 
 table_name = 'favorite_teams'
 primary_keys = ['username', 'team_name']
@@ -45,12 +46,26 @@ def view_favorite_teams(request):
     """
         Searches for all records based on query params. returns all records if no query params are present.
     """
-    username = request.session["user"]
-    query = "SELECT * FROM "+table_name+" WHERE username='"+request.session["user"]+"';"
 
-    columns, records = do_sql(query)
-    context = {'records': records, 'columns': columns, 'params': request.GET}
-    return render(request, table_name + '.html', context)
+    query = "SELECT * FROM "+table_name+" WHERE username='"+request.session["user"]+"'"
+    fields, params = get_fields_and_params(request.GET)
+
+    if len(fields) != 0:
+        query += " AND " + " AND ".join(fields)
+    query += ";"
+    print(query)
+    try:
+        columns, records = do_sql(query, params)
+        if len(records) != 0:
+            context = {'records': records, 'columns': columns, 'params': request.GET}
+            return render(request, table_name + '.html', context)
+        else:
+            messages.error(request, 'Could not find any players with that name, please try again')
+            context = {'records': records, 'columns': columns, 'params': request.GET}
+            return render(request, table_name + '.html', context)
+    except:
+        messages.error(request,' failed to retrieve team')
+        redirect('view_favorite_teams')
 
 def delete_favorite_team(request, team_name):
     """
@@ -58,8 +73,11 @@ def delete_favorite_team(request, team_name):
     """
     query = "DELETE FROM " + table_name + " WHERE username='"+request.session["user"]+"' AND team_name='"+team_name+"';"
 
-    do_sql(query)
+    if do_sql(query):
+        messages.success(request,' successfully deleted favorite team')
+    else:
+        messages.error(request,' failed to delete favorite team')
 
-    return HttpResponseRedirect(reverse('view_favorite_teams'))
+    return redirect('view_favorite_teams')
 
 

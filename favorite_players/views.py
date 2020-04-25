@@ -5,6 +5,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import FormView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib import messages
 
 table_name = 'favorite_players'
 primary_keys = ['username', 'player_name']
@@ -46,17 +47,25 @@ def view_favorite_players(request):
         Searches for all records based on query params. returns all records if no query params are present.
     """
     
-    username = request.session["user"]
     query = "SELECT * FROM "+table_name+" WHERE username='"+request.session["user"]+"'"
     fields, params = get_fields_and_params(request.GET)
 
     if len(fields) != 0:
-        query += " AND WHERE " + " AND ".join(fields)
+        query += " AND " + " AND ".join(fields)
     query += ";"
-    print(query)
-    columns, records = do_sql(query)
-    context = {'records': records, 'columns': columns, 'params': request.GET}
-    return render(request, table_name + '.html', context)
+
+    try:
+        columns, records = do_sql(query, params)
+        if len(records) != 0:
+            context = {'records': records, 'columns': columns, 'params': request.GET}
+            return render(request, table_name + '.html', context)
+        else:
+            messages.error(request, 'Could not find any players with that name, please try again')
+            context = {'records': records, 'columns': columns, 'params': request.GET}
+            return render(request, table_name + '.html', context)
+    except:
+        messages.error(request,' failed to retrieve player')
+        redirect('view_favorite_players')
 
 def delete_favorite_players(request, player_name):
     """
@@ -64,7 +73,9 @@ def delete_favorite_players(request, player_name):
     """
     query = "DELETE FROM " + table_name + " WHERE username='"+request.session["user"]+"' AND player_name='"+player_name+"';"
 
-    do_sql(query)
-
-    return HttpResponseRedirect(reverse('view_favorite_players'))
+    if do_sql(query):
+        messages.success(request,' successfully deleted favorite player')
+    else:
+        messages.error(request,' failed to delete favorite player')
+    return redirect('view_favorite_players')
 
