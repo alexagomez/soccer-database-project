@@ -24,8 +24,6 @@ alt_tables = {
 
 
 def do_sql(query, params=[]):
-    print("QUERY =", query)
-    print("PARAMS =", params)
     with connection.cursor() as cursor:
         try:
             cursor.execute(query, params)
