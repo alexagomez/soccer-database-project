@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 {% load leagues_extras %}
 <html lang="en">
 <nav class="navbar navbar-default">
@@ -10,6 +13,7 @@
         <li><a href="/teams/view_national_teams">National Teams</a></li>
         <li><a href="/players/view">Players</a></li>
         <li><a href="/coaches/view">Coaches</a></li>
+        <li><a href="/tournaments/view">Tournaments</a></li>
         <li><a href="/favorite_players/view">Fav. Players</a></li>
         <li><a href="/favorite_teams/view">Fav. Teams</a></li>
       </ul>
@@ -24,7 +28,7 @@
         <input type="text" id="{{column}}" name="{{column}}" placeholder="{{column}}" size="10">
         <br>
     {% endfor %}
-    <a href="javascript:document.add{{table_name}}.submit()">Submit</a>
+    <a class="btn btn-success" href="javascript:document.add{{table_name}}.submit()">Submit</a>
 </form>
 {% endwith %}
 {% endwith %}
