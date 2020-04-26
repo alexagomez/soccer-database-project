@@ -42,7 +42,8 @@
         <input type="text" id="{{column}}" name="{{column}}" placeholder="{{column}}" value="{% dict_get record column %}">
         <br>
     {% endfor %}
-    <a href="javascript:document.edit{{table_name}}.submit()">Submit</a>
+    <a class="btn btn-success" href="javascript:document.edit{{table_name}}.submit()">Submit</a>
+    <a class="btn btn-danger" href="/{{table_name}}/delete_{{type}}_team?{{primary_key}}={% dict_get params primary_key %}">Delete</a>
 </form>
 {% endwith %}
 {% endwith %}
