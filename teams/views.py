@@ -4,7 +4,7 @@ from django.db import connection
 from django.db.utils import OperationalError
 from urllib.parse import unquote
 from django.urls import reverse_lazy, reverse
-from django.views.generic import FormView
+from django.contrib import messages
 
 from django.shortcuts import get_object_or_404, render, redirect
 
@@ -20,6 +20,23 @@ national_team_alt = {
     'primary_key': 'name',
     'table_columns': ['name', 'num_world_cups']
 }
+
+field_restrictions = {
+    'ints': {
+        'num_champs': 11,
+        'num_wins': 11,
+        'num_losses': 11,
+        'num_ties': 11,
+        'payroll': 11,
+        'num_world_cups': 11
+    },
+    'str': {
+        'name': 100,
+        'league': 100
+    }
+}
+
+failed_columns = []
 
 
 def do_sql(query, params=[]):
@@ -60,6 +77,37 @@ def get_fields_and_params(request_dict):
                 field_to_param[field + " = %s"] = param
 
     return field_to_param
+
+
+def check_valid_vals(fields_and_params):
+    """
+        Takes a dictionary of fields mapped to the values that are trying to be set, then check before trying to execute
+        if they match restrictions of database. Returns True if all ok, false otherwise.
+    """
+    global failed_columns
+    failed_columns = []
+    for column_name, val in fields_and_params.items():
+        if column_name.split(" ")[0] in field_restrictions['ints'].keys():
+            if val.strip() == "":
+                failed_columns.append(column_name.split(" ")[0])
+            else:
+                try:
+                    int(val.strip())
+                except ValueError:
+                    failed_columns.append(column_name.split(" ")[0])
+
+        elif column_name.split(" ")[0] in field_restrictions['str'].keys():
+            if val.strip() == "":
+                failed_columns.append(column_name.split(" ")[0])
+            else:
+                if len(val.strip()) > field_restrictions['str'][column_name.split(' ')[0]]:
+                    failed_columns.append(column_name.split(' ')[0])
+
+    if len(failed_columns) > 0:
+        failed_columns = list(set(failed_columns))
+        return False
+
+    return True
 
 
 def view_club_teams(request):
@@ -105,6 +153,10 @@ def add_club_team(request):
         query = 'INSERT INTO ' + table_name + ' VALUES ('
 
         fields_and_params = get_fields_and_params(request.POST)
+        if not check_valid_vals(fields_and_params):
+            messages.error(request, 'Values of the following columns were invalid, please try again! Columns: '
+                           + ", ".join(failed_columns))
+            return redirect('/' + table_name + '/add_club_team')
         main_dict = {k: v for k, v in fields_and_params.items() if k.split(" ")[0] in table_columns}
         placeholders = ["%s"] * len(main_dict)
         query += ", ".join(placeholders) + ");"
@@ -133,6 +185,10 @@ def add_national_team(request):
         query = 'INSERT INTO ' + table_name + ' VALUES ('
 
         fields_and_params = get_fields_and_params(request.POST)
+        if not check_valid_vals(fields_and_params):
+            messages.error(request, 'Values of the following columns were invalid, please try again! Columns: '
+                           + ", ".join(failed_columns))
+            return redirect('/' + table_name + '/add_national_team')
         main_dict = {k: v for k, v in fields_and_params.items() if k.split(" ")[0] in table_columns}
         placeholders = ["%s"] * len(main_dict)
         query += ", ".join(placeholders) + ");"
@@ -187,6 +243,10 @@ def edit_club_team(request):
         new_pk_val = request.POST.get(primary_key)
 
         fields_and_params = get_fields_and_params(request.POST)
+        if not check_valid_vals(fields_and_params):
+            messages.error(request, 'Values of the following columns were invalid, please try again! Columns: '
+                           + ", ".join(failed_columns))
+            return redirect('/' + table_name + '/edit_club_team?' + primary_key + '=' + old_pk_val)
 
         if len(fields_and_params) != 0:
             main_dict = {k: v for k, v in fields_and_params.items() if k.split(" ")[0] in table_columns}
@@ -249,6 +309,10 @@ def edit_national_team(request):
         new_pk_val = request.POST.get(primary_key)
 
         fields_and_params = get_fields_and_params(request.POST)
+        if not check_valid_vals(fields_and_params):
+            messages.error(request, 'Values of the following columns were invalid, please try again! Columns: '
+                           + ", ".join(failed_columns))
+            return redirect('/' + table_name + '/edit_national_team?' + primary_key + '=' + old_pk_val)
 
         if len(fields_and_params) != 0:
             main_dict = {k: v for k, v in fields_and_params.items() if k.split(" ")[0] in table_columns}

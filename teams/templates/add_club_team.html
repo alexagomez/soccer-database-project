@@ -1,6 +1,20 @@
+{% load static %}
+
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<!-- <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}"> -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
 <!DOCTYPE html>
 {% load teams_extras %}
 <html lang="en">
+{% for message in messages %}
+    {% if 'error' in message.tags %}
+        <div class="alert alert-warning">
+            <a class="close" href="{% url 'view_favorite_players' %}" data-dismiss="alert">×</a>
+                {{ message }}
+        </div>
+    {% endif %}
+{% endfor %}
 <h1>Add Club Team</h1>
 {% with primary_key='name' %}
 {% with table_name='teams' %}
