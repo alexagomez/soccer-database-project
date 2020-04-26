@@ -1,10 +1,12 @@
 import copy
 
+import datetime
+
 from django.db import connection
 from django.db.utils import OperationalError
 from urllib.parse import unquote
 from django.urls import reverse_lazy, reverse
-from django.views.generic import FormView
+from django.contrib import messages
 
 from django.shortcuts import get_object_or_404, render, redirect
 
@@ -24,6 +26,35 @@ alt_tables = {
         'table_columns': ['long_name', 'club_team', 'national_team']
     }
 }
+
+field_restrictions = {
+    'ints': {
+        'age': 11,
+        'height_cm': 11,
+        'weight_kg': 11,
+        'passing': 11,
+        'defending': 11,
+        'shooting': 11,
+        'dribbling': 11,
+        'pace': 11,
+        'overall': 11,
+        'team_jersey_number': 11,
+        'wage_eur': 11
+    },
+    'str': {
+        'long_name': 100,
+        'nationality': 100,
+        'preferred_foot': 5,
+        'position': 4,
+        'club_team': 100,
+        'national_team': 100
+    },
+    'date': {
+        'dob': '%Y-%m-%d'
+    }
+}
+
+nullable = ['team_jersey_number', 'wage_eur', 'club_team', 'national_team']
 
 
 def do_sql(query, params=[]):
@@ -75,6 +106,49 @@ def combine_multi_values(query_set, primary_key_vals, multi_value_field):
         unique_records.append(first_entry)
 
     return unique_records
+
+
+def check_valid_vals(fields_and_params):
+    """
+        Takes a dictionary of fields mapped to the values that are trying to be set, then check before trying to execute
+        if they match restrictions of database. Returns True if all ok, false otherwise.
+    """
+    for column_name in field_restrictions['ints'].keys():  # check if all ints are set appropriately
+        val = fields_and_params.get(column_name + " = %s")
+        if val is None or val.strip() == "":
+            print(column_name, "FAILED")
+            return False
+        else:
+            try:
+                int(val.strip())
+            except ValueError:
+                print(column_name, "FAILED")
+                return False
+
+    for column_name, length in field_restrictions['str'].items():
+        val = fields_and_params.get(column_name + " = %s")
+        if val.strip() == "" and column_name not in nullable:
+            print(column_name, "FAILED")
+            return False
+
+        if len(val.strip()) > length:
+            print(column_name, "FAILED")
+            return False
+
+
+    for column_name, form in field_restrictions['date'].items():
+        val = fields_and_params.get(column_name + " = %s")
+        if val is None or val.strip() == "":
+            print(column_name, "FAILED")
+            return False
+
+        try:
+            datetime.datetime.strptime(val.strip(), form)
+        except ValueError:
+            print(column_name, "FAILED")
+            return False
+
+    return True
 
 
 def view_players(request):
@@ -175,6 +249,9 @@ def edit_player(request):
         new_pk_val = request.POST.get(primary_key)
 
         fields_and_params = get_fields_and_params(request.POST)
+        if not check_valid_vals(fields_and_params):
+            messages.error(request, 'Values submitted to update were invalid. Please try again!')
+            return redirect('/' + table_name + '/edit?' + primary_key + '=' + old_pk_val)
 
         if len(fields_and_params) != 0:
             main_dict = {k: v for k, v in fields_and_params.items() if k.split(" ")[0] in table_columns}

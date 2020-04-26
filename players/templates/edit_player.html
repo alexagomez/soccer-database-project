@@ -7,6 +7,14 @@
 <!DOCTYPE html>
 {% load players_extras %}
 <html lang="en">
+{% for message in messages %}
+    {% if 'error' in message.tags %}
+        <div class="alert alert-warning">
+            <a class="close" href="{% url 'view_favorite_players' %}" data-dismiss="alert">×</a>
+                {{ message }}
+        </div>
+    {% endif %}
+{% endfor %}
 <h1>Edit Player</h1>
 {% with primary_key='long_name' %}
 {% with table_name='players' %}
