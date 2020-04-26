@@ -1,6 +1,6 @@
 import copy
 
-from django.db import connection
+from django.db import connection, IntegrityError
 from django.db.utils import OperationalError
 from urllib.parse import unquote
 from django.urls import reverse_lazy, reverse
@@ -160,13 +160,23 @@ def add_club_team(request):
         main_dict = {k: v for k, v in fields_and_params.items() if k.split(" ")[0] in table_columns}
         placeholders = ["%s"] * len(main_dict)
         query += ", ".join(placeholders) + ");"
-        all_performed = do_sql(query, main_dict.values())
+        try:
+            all_performed = do_sql(query, main_dict.values())
+        except IntegrityError as err:
+            messages.error(request, 'Could not update information for the club team due to the following error: ' +
+                           str(err))
+            return redirect('/' + table_name + '/add_club_team')
         alt_dict = {k: v for k, v in fields_and_params.items() if k.split(" ")[0] in club_team_alt['table_columns']}
         query = 'INSERT INTO club_teams VALUES ('
         placeholders = ["%s"] * len(alt_dict)
         query += ", ".join(placeholders) + ");"
-        if not do_sql(query, alt_dict.values()):
-            all_performed = False
+        try:
+            if not do_sql(query, alt_dict.values()):
+                all_performed = False
+        except IntegrityError as err:
+            messages.error(request, 'Could not update information for the club team due to the following error: ' +
+                           str(err))
+            return redirect('/' + table_name + '/add_club_team')
 
         if all_performed:
             return redirect('/' + table_name + '/view_club_teams?' + primary_key + '=' + request.POST.get(primary_key))
@@ -192,13 +202,23 @@ def add_national_team(request):
         main_dict = {k: v for k, v in fields_and_params.items() if k.split(" ")[0] in table_columns}
         placeholders = ["%s"] * len(main_dict)
         query += ", ".join(placeholders) + ");"
-        all_performed = do_sql(query, main_dict.values())
+        try:
+            all_performed = do_sql(query, main_dict.values())
+        except IntegrityError as err:
+            messages.error(request, 'Could not update information for the national team due to the following error: ' +
+                           str(err))
+            return redirect('/' + table_name + '/add_national_team')
         alt_dict = {k: v for k, v in fields_and_params.items() if k.split(" ")[0] in national_team_alt['table_columns']}
         query = 'INSERT INTO national_teams VALUES ('
         placeholders = ["%s"] * len(alt_dict)
         query += ", ".join(placeholders) + ");"
-        if not do_sql(query, alt_dict.values()):
-            all_performed = False
+        try:
+            if not do_sql(query, alt_dict.values()):
+                all_performed = False
+        except IntegrityError as err:
+            messages.error(request, 'Could not update information for the national team due to the following error: ' +
+                           str(err))
+            return redirect('/' + table_name + '/add_national_team')
 
         if all_performed:
             return redirect('/' + table_name + '/view_national_teams?' + primary_key + '=' + request.POST.get(primary_key))
@@ -254,7 +274,13 @@ def edit_club_team(request):
                      primary_key + " = %s;"
             params = list(main_dict.values())
             params.append(old_pk_val)
-            all_performed = do_sql(query, params)
+            try:
+                all_performed = do_sql(query, params)
+            except IntegrityError as err:
+                messages.error(request,
+                               'Could not update information for the club team due to the following error: ' +
+                               str(err))
+                return redirect('/' + table_name + '/edit_club_team?' + primary_key + '=' + old_pk_val)
 
             alt_dict = {k: v for k, v in fields_and_params.items() if
                             k.split(" ")[0] in club_team_alt['table_columns']}
@@ -263,8 +289,14 @@ def edit_club_team(request):
                      + " WHERE " + primary_key + " = %s;"
             params = list(alt_dict.values())
             params.append(old_pk_val)
-            if not do_sql(query, params):
-                all_performed = False
+            try:
+                if not do_sql(query, params):
+                    all_performed = False
+            except IntegrityError as err:
+                messages.error(request,
+                               'Could not update information for the club team due to the following error: ' +
+                               str(err))
+                return redirect('/' + table_name + '/edit_club_team?' + primary_key + '=' + old_pk_val)
 
             if all_performed:
                 return redirect('/' + table_name + '/view_club_teams?' + primary_key + '=' + new_pk_val)
@@ -320,7 +352,13 @@ def edit_national_team(request):
                      primary_key + " = %s;"
             params = list(main_dict.values())
             params.append(old_pk_val)
-            all_performed = do_sql(query, params)
+            try:
+                all_performed = do_sql(query, params)
+            except IntegrityError as err:
+                messages.error(request,
+                               'Could not update information for the national team due to the following error: ' +
+                               str(err))
+                return redirect('/' + table_name + '/edit_national_team?' + primary_key + '=' + old_pk_val)
 
             alt_dict = {k: v for k, v in fields_and_params.items() if
                             k.split(" ")[0] in national_team_alt['table_columns']}
@@ -329,8 +367,14 @@ def edit_national_team(request):
                      + " WHERE " + primary_key + " = %s;"
             params = list(alt_dict.values())
             params.append(old_pk_val)
-            if not do_sql(query, params):
-                all_performed = False
+            try:
+                if not do_sql(query, params):
+                    all_performed = False
+            except IntegrityError as err:
+                messages.error(request,
+                               'Could not update information for the national team due to the following error: ' +
+                               str(err))
+                return redirect('/' + table_name + '/edit_national_team?' + primary_key + '=' + old_pk_val)
 
             if all_performed:
                 return redirect('/' + table_name + '/view_national_teams?' + primary_key + '=' + new_pk_val)
@@ -341,7 +385,10 @@ def edit_national_team(request):
 def add_favorite_team(request, long_name):
     query = 'INSERT INTO favorite_teams VALUES (%s, %s);'
     params = (request.session["user"], long_name)
-    if do_sql(query, params):
-        return redirect(reverse('view_club_teams'))
-    else:
-        return redirect(reverse('add_favorite'))
+    try:
+        if do_sql(query, params):
+            return redirect(reverse('view_club_teams'))
+        else:
+            return redirect(reverse('add_favorite'))
+    except IntegrityError as err:
+        return redirect('/favorite_teams/view')

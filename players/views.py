@@ -372,6 +372,4 @@ def add_favorite_player(request, long_name):
             else:
                 return redirect(reverse('add_favorite'))
         except IntegrityError as err:
-            messages.error(request, 'Could not update information for the player due to the following error: ' +
-                           str(err))
             return redirect('/favorite_players/view')
