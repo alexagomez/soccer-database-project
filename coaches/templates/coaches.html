@@ -43,7 +43,7 @@
     <h1>hello, {{request.session.user}}</h1>
 {% endif %}
 <h1>Coaches</h1>
-{% with primary_key='full_name' %}
+{% with primary_key='long_name' %}
 {% with table_name='coaches' %}
 <table class="table">
     <tr>
