@@ -83,7 +83,6 @@ class LogIn(FormView):
         columns, hashed = do_sql_return(f"Select password From registered_users Where username='{username}';")
         try:
             if(check_password(password, hashed[0]["password"])):
-                print('success')
                 self.request.session['user'] = username
                 return super(LogIn, self).form_valid(form)
             else:
@@ -104,11 +103,8 @@ class RemoveAccount(FormView):
         columns, hashed = do_sql_return(f"Select password From registered_users Where username='{username}';")
         if(check_password(password, hashed[0]["password"]), None, 'pbkdf2_sha256'):
             if do_sql("DELETE FROM favorite_players WHERE username='"+username+"';"):
-                print('deleted favorite_players')
                 if do_sql("DELETE FROM favorite_teams WHERE username='"+username+"';"):
-                    print('deleted favorite_teams')
                     if do_sql("DELETE FROM registered_users WHERE username='"+username+"';"):
-                        print('deleted registered_users')
                         try:
                             if self.request.session["user"]:
                                 del request.session["user"]
@@ -116,13 +112,10 @@ class RemoveAccount(FormView):
                             pass
                         return super(RemoveAccount, self).form_valid(form)
                     else:
-                        print('failed at remove user')
                         return HttpResponseRedirect(reverse('remove')) 
                 else:
-                    print('failed at remove teams')
                     return HttpResponseRedirect(reverse('remove'))
             else:
-                print('failed at remove players')
                 return HttpResponseRedirect(reverse('remove'))
         else:
             messages.error(self.request, 'Failed to remove account! Please try again with valid credentials')

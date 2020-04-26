@@ -59,8 +59,6 @@ failed_columns = []
 
 
 def do_sql(query, params=[]):
-    print(query)
-    print(params)
     with connection.cursor() as cursor:
         try:
             cursor.execute(query, params)

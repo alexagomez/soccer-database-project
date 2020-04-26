@@ -53,7 +53,6 @@ def view_favorite_teams(request):
     if len(fields) != 0:
         query += " AND " + " AND ".join(fields)
     query += ";"
-    print(query)
     try:
         columns, records = do_sql(query, params)
         if len(records) != 0:
