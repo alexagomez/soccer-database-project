@@ -20,6 +20,20 @@
     }
 </script>
 <html lang="en">
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <ul class="nav navbar-nav">
+        <li><a href="/">Home</a></li>
+        <li><a href="/leagues/view">Leagues</a></li>
+        <li><a href="/teams/view_club_teams">Club Teams</a></li>
+        <li><a href="/teams/view_national_teams">National Teams</a></li>
+        <li><a href="/players/view">Players</a></li>
+        <li><a href="/coaches/view">Coaches</a></li>
+        <li><a href="/favorite_players/view">Fav. Players</a></li>
+        <li><a href="/favorite_teams/view">Fav. Teams</a></li>
+      </ul>
+  </div><!-- /.container-fluid -->
+</nav>
     {% for message in messages %}
     {% if 'success' in message.tags %}
 
@@ -76,7 +90,7 @@
         <tr>
             {% for column in columns %}
                 {% if column == 'player_name' %}
-                    <td><a href="/players/edit?long_name={% dict_get record column %}">{% dict_get record column %}</a></td>
+                    <td><a href="/players/view_individual?long_name={% dict_get record column %}">{% dict_get record column %}</a></td>
                 {% else %}
                     <td>{% dict_get record column %}</td>
                 {% endif %}
