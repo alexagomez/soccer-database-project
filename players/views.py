@@ -12,6 +12,7 @@ table_name = 'players'
 primary_key = 'long_name'
 table_columns = ['long_name', 'age', 'dob', 'height_cm', 'weight_kg', 'nationality', 'passing', 'defending', 'shooting',
                  'dribbling', 'pace', 'overall', 'team_jersey_number', 'preferred_foot', 'wage_eur']
+drop_columns = ['passing', 'defending', 'shooting', 'dribbling', 'pace']
 
 alt_tables = {
     'player_positions': {
@@ -96,9 +97,43 @@ def view_players(request):
     query += ";"
     columns, records = do_sql(query, fields_and_params.values())
 
+    columns = [item for item in columns if item not in drop_columns]
+
     records = combine_multi_values(records, pk_vals, 'position')
     context = {'records': records, 'columns': columns, 'params': request.GET}
     return render(request, table_name + '.html', context)
+
+
+def view_individual(request):
+    """
+        Gives a view of the person's full set of attributes
+    """
+    fields_and_params = get_fields_and_params(request.GET)
+    pk_val_query = "SELECT " + primary_key + " FROM " + table_name + ' NATURAL JOIN ' + ' NATURAL JOIN '.join(
+        alt_tables.keys())
+
+    if len(fields_and_params) != 0:
+        pk_val_query += " WHERE " + " AND ".join(fields_and_params.keys())
+    pk_val_query += ";"
+    pk, pk_vals = do_sql(pk_val_query, fields_and_params.values())
+
+    player_name = request.GET.get(primary_key, None)
+    if player_name is None:
+        context = {'record': {primary_key: 'None'}}
+        return render(request, 'edit_player.html', context)
+
+    query = "SELECT * FROM " + table_name + ' NATURAL JOIN ' + ' NATURAL JOIN '.join(alt_tables.keys())
+    fields_and_params = get_fields_and_params(request.GET)
+
+    if len(fields_and_params) != 0:
+        query += " WHERE " + " AND ".join(fields_and_params.keys())
+    query += ";"
+
+    columns, record = do_sql(query, fields_and_params.values())
+    record = combine_multi_values(record, pk_vals, 'position')
+
+    context = {'record': record[0], 'columns': columns, 'params': request.GET}
+    return render(request, 'view_individual.html', context)
 
 
 def edit_player(request):
@@ -160,7 +195,7 @@ def edit_player(request):
                     all_performed = False
 
             if all_performed:
-                return redirect('/' + table_name + '/view?' + primary_key + '=' + new_pk_val)
+                return redirect('/' + table_name + '/view_individual?' + primary_key + '=' + new_pk_val)
 
         return redirect('/' + table_name + '/edit?' + primary_key + '=' + old_pk_val)
 
@@ -194,10 +229,10 @@ def add_player(request):
         else:
             return redirect('/' + table_name + '/add')
 
+
 def add_favorite_player(request, long_name):
         query = 'INSERT INTO favorite_players VALUES (%s, %s);'
         params = (request.session["user"], long_name)
-        print('here')
         if do_sql(query, params):
             return redirect(reverse('view_players'))
         else:

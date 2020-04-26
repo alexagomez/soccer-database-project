@@ -3,13 +3,11 @@
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <!-- <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}"> -->
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-
 <!DOCTYPE html>
-{% load players_extras %}
+{% load teams_extras %}
 <script>
     function searchRedirect() {
-        var columns = ['long_name', 'age', 'dob', 'height_cm', 'weight_kg', 'nationality', 'overall',
-                       'team_jersey_number', 'preferred_foot', 'wage_eur', 'position', 'club_team', 'national_team'];
+        var columns = ['name', 'num_champs', 'num_wins', 'num_losses', 'num_ties', 'num_world_cups'];
         var redirectParams = [];
         for (var i = 0; i < columns.length; i++) {
             var searchVal = document.getElementById(columns[i]).value;
@@ -24,9 +22,9 @@
 {% if request.session.user %}
     <h1>hello, {{request.session.user}}</h1>
 {% endif %}
-<h1>Players</h1>
-{% with primary_key='long_name' %}
-{% with table_name='players' %}
+<h1>National Teams</h1>
+{% with primary_key='name' %}
+{% with table_name='teams' %}
 <table class="table">
     <tr>
         {% for column in columns %}
@@ -43,13 +41,13 @@
         <tr>
             {% for column in columns %}
                 {% if column == primary_key %}
-                    <td><a href="/{{table_name}}/view_individual?{{primary_key}}={% dict_get record column %}">{% dict_get record column %}</a></td>
+                    <td><a href="/{{table_name}}/edit_national_team?{{primary_key}}={% dict_get record column %}">{% dict_get record column %}</a></td>
                 {% endif %}
                 {% if column != primary_key %}
                     <td>{% dict_get record column %}</td>
                 {% endif %}
             {% endfor %}
-            <td><a class="btn btn-info" href="/{{table_name}}/favorite/{% dict_get record 'long_name' %}">add to favorites</a></td>
+            <td><a class="btn btn-info" href="/{{table_name}}/favorite/{% dict_get record primary_key %}">add to favorites</a></td>
         </tr>
     {% endfor %}
 </table>

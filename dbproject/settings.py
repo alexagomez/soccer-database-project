@@ -44,14 +44,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'club_teams',
     'coaches',
     'players',
     'users',
     'favorite_players',
     'favorite_teams',
     'leagues',
-    'crispy_forms'
+    'crispy_forms',
+    'teams'
 ]
 
 PASSWORD_HASHERS = [
