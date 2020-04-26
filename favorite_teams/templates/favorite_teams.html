@@ -16,6 +16,9 @@
         <li><a href="/coaches/view">Coaches</a></li>
         <li><a href="/favorite_players/view">Fav. Players</a></li>
         <li><a href="/favorite_teams/view">Fav. Teams</a></li>
+        {% if request.session.user %}
+        <li><a href="{% url 'logout' %}">Log out</a></li>
+        {% endif %}
       </ul>
   </div><!-- /.container-fluid -->
 </nav>
