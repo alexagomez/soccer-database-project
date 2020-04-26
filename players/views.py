@@ -12,6 +12,7 @@ table_name = 'players'
 primary_key = 'long_name'
 table_columns = ['long_name', 'age', 'dob', 'height_cm', 'weight_kg', 'nationality', 'passing', 'defending', 'shooting',
                  'dribbling', 'pace', 'overall', 'team_jersey_number', 'preferred_foot', 'wage_eur']
+drop_columns = ['passing', 'defending', 'shooting', 'dribbling', 'pace']
 
 alt_tables = {
     'player_positions': {
@@ -95,6 +96,8 @@ def view_players(request):
         query += " WHERE " + " AND ".join(fields_and_params.keys())
     query += ";"
     columns, records = do_sql(query, fields_and_params.values())
+
+    columns = [item for item in columns if item not in drop_columns]
 
     records = combine_multi_values(records, pk_vals, 'position')
     context = {'records': records, 'columns': columns, 'params': request.GET}

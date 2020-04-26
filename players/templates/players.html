@@ -8,9 +8,8 @@
 {% load players_extras %}
 <script>
     function searchRedirect() {
-        var columns = ['long_name', 'age', 'dob', 'height_cm', 'weight_kg', 'nationality', 'passing', 'defending',
-                       'shooting', 'dribbling', 'pace', 'overall', 'team_jersey_number', 'preferred_foot', 'wage_eur',
-                       'position', 'club_team', 'national_team'];
+        var columns = ['long_name', 'age', 'dob', 'height_cm', 'weight_kg', 'nationality', 'overall',
+                       'team_jersey_number', 'preferred_foot', 'wage_eur', 'position', 'club_team', 'national_team'];
         var redirectParams = [];
         for (var i = 0; i < columns.length; i++) {
             var searchVal = document.getElementById(columns[i]).value;
