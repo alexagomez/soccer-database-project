@@ -70,7 +70,7 @@ def view_club_teams(request):
 
     if len(fields_and_params) != 0:
         query += " WHERE " + " AND ".join(fields_and_params.keys())
-        query += ";"
+    query += ";"
     columns, records = do_sql(query, fields_and_params.values())
     print('COLUMNS = ', columns)
 
@@ -87,7 +87,7 @@ def view_national_teams(request):
 
     if len(fields_and_params) != 0:
         query += " WHERE " + " AND ".join(fields_and_params.keys())
-        query += ";"
+    query += ";"
     columns, records = do_sql(query, fields_and_params.values())
 
     context = {'records': records, 'columns': columns, 'params': request.GET}

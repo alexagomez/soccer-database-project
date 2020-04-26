@@ -3,12 +3,11 @@
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <!-- <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}"> -->
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-
 <!DOCTYPE html>
 {% load teams_extras %}
 <script>
     function searchRedirect() {
-        var columns = ['name', 'num_champs', 'num_wins', 'num_losses', 'num_ties', 'payroll', 'league', 'num_world_cups'];
+        var columns = ['name', 'num_champs', 'num_wins', 'num_losses', 'num_ties', 'num_world_cups'];
         var redirectParams = [];
         for (var i = 0; i < columns.length; i++) {
             var searchVal = document.getElementById(columns[i]).value;
