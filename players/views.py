@@ -2,7 +2,7 @@ import copy
 
 import datetime
 
-from django.db import connection
+from django.db import connection, IntegrityError
 from django.db.utils import OperationalError
 from urllib.parse import unquote
 from django.urls import reverse_lazy, reverse
@@ -261,7 +261,12 @@ def edit_player(request):
                      primary_key + " = %s;"
             params = list(main_dict.values())
             params.append(old_pk_val)
-            all_performed = do_sql(query, params)
+            try:
+                all_performed = do_sql(query, params)
+            except IntegrityError as err:
+                messages.error(request, 'Could not update information for the player due to the following error: ' +
+                               str(err))
+                return redirect('/' + table_name + '/edit?' + primary_key + '=' + old_pk_val)
 
             for alt_table_name, table_info in alt_tables.items():
                 alt_dict = {k: v for k, v in fields_and_params.items() if
@@ -269,7 +274,13 @@ def edit_player(request):
 
                 if alt_table_name == 'player_positions':
                     query = "DELETE FROM " + alt_table_name + " WHERE long_name = %s;"
-                    all_performed = do_sql(query, [old_pk_val])
+                    try:
+                        all_performed = do_sql(query, [old_pk_val])
+                    except IntegrityError as err:
+                        messages.error(request,
+                                       'Could not update information for the player due to the following error: ' +
+                                       str(err))
+                        return redirect('/' + table_name + '/edit?' + primary_key + '=' + old_pk_val)
 
                     positions = alt_dict['position = %s']
                     position_list = positions.split(",")
@@ -277,8 +288,14 @@ def edit_player(request):
                     for position in position_list:
                         query = "INSERT INTO " + alt_table_name + " VALUES (%s, %s);"
                         params = [new_pk_val, position.strip()]
-                        if not do_sql(query, params):
-                            all_performed = False
+                        try:
+                            if not do_sql(query, params):
+                                all_performed = False
+                        except IntegrityError as err:
+                            messages.error(request,
+                                           'Could not update information for the player due to the following error: ' +
+                                           str(err))
+                            return redirect('/' + table_name + '/edit?' + primary_key + '=' + old_pk_val)
 
                 else:
                     query = "UPDATE " + alt_table_name
@@ -286,8 +303,14 @@ def edit_player(request):
                              + " WHERE " + primary_key + " = %s;"
                     params = list(alt_dict.values())
                     params.append(old_pk_val)
-                    if not do_sql(query, params):
-                        all_performed = False
+                    try:
+                        if not do_sql(query, params):
+                            all_performed = False
+                    except IntegrityError as err:
+                        messages.error(request,
+                                       'Could not update information for the player due to the following error: ' +
+                                       str(err))
+                        return redirect('/' + table_name + '/edit?' + primary_key + '=' + old_pk_val)
 
             if all_performed:
                 return redirect('/' + table_name + '/view_individual?' + primary_key + '=' + new_pk_val)
@@ -314,14 +337,25 @@ def add_player(request):
         main_dict = {k: v for k, v in fields_and_params.items() if k.split(" ")[0] in table_columns}
         placeholders = ["%s"] * len(main_dict)
         query += ", ".join(placeholders) + ");"
-        all_performed = do_sql(query, main_dict.values())
+        try:
+            all_performed = do_sql(query, main_dict.values())
+        except IntegrityError as err:
+            messages.error(request, 'Could not update information for the player due to the following error: ' +
+                           str(err))
+            return redirect('/' + table_name + '/add')
+
         for alt_table_name, table_info in alt_tables.items():
             alt_dict = {k: v for k, v in fields_and_params.items() if k.split(" ")[0] in table_info['table_columns']}
             query = 'INSERT INTO ' + alt_table_name + ' VALUES ('
             placeholders = ["%s"] * len(alt_dict)
             query += ", ".join(placeholders) + ");"
-            if not do_sql(query, alt_dict.values()):
-                all_performed = False
+            try:
+                if not do_sql(query, alt_dict.values()):
+                    all_performed = False
+            except IntegrityError as err:
+                messages.error(request, 'Could not update information for the player due to the following error: ' +
+                               str(err))
+                return redirect('/' + table_name + '/add')
 
         if all_performed:
             return redirect('/' + table_name + '/view?' + primary_key + '=' + request.POST.get(primary_key))
@@ -332,7 +366,12 @@ def add_player(request):
 def add_favorite_player(request, long_name):
         query = 'INSERT INTO favorite_players VALUES (%s, %s);'
         params = (request.session["user"], long_name)
-        if do_sql(query, params):
-            return redirect(reverse('view_players'))
-        else:
-            return redirect(reverse('add_favorite'))
+        try:
+            if do_sql(query, params):
+                return redirect(reverse('view_players'))
+            else:
+                return redirect(reverse('add_favorite'))
+        except IntegrityError as err:
+            messages.error(request, 'Could not update information for the player due to the following error: ' +
+                           str(err))
+            return redirect('/favorite_players/view')
