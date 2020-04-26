@@ -10,14 +10,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 
 table_name = 'tournaments'
 primary_key = 'tournament_name'
-table_columns = ['tournament_name', 'year', 'prize']
-
-# alt_tables = {
-#     'tournament_wins': {
-#         'primary_key': ['team_name', 'tournament_name', 'year'],
-#         'table_columns': ['team_name', 'tournament_name', 'year']
-#     }
-# }
+table_columns = ['tournament_name', 'year', 'prize', 'team_name']
 
 
 def do_sql(query, params=[]):
@@ -91,18 +84,21 @@ def edit_tournament(request):
 
     if request.method == 'POST':  # this is when they click submit on an edit
         query = "UPDATE " + table_name
-        old_pk_val = unquote(str(request.get_full_path()).split("=")[1])
-        new_pk_val = request.POST.get(primary_key)
+        old_name = unquote(str(request.get_full_path()).split("=")[1].split("&")[0])
+        old_year = unquote(str(request.get_full_path()).split("=")[2])
+        new_name = request.POST.get(primary_key)
+        new_year = request.POST.get('year')
 
         fields, params = get_fields_and_params(request.POST)
 
         if len(fields) != 0:
-            query += " SET " + ", ".join(fields) + " WHERE " + primary_key + " = %s;"
-            params.append(old_pk_val)
+            query += " SET " + ", ".join(fields) + " WHERE " + primary_key + " = %s AND year = %s;"
+            params.append(old_name)
+            params.append(old_year)
             if do_sql(query, params):
-                return redirect('/' + table_name + '/view?' + primary_key + '=' + new_pk_val)
+                return redirect('/' + table_name + '/view?' + primary_key + '=' + new_name + '&' + 'year=' + str(new_year))
 
-        return redirect('/' + table_name + '/edit?' + primary_key + '=' + old_pk_val)
+        return redirect('/' + table_name + '/edit?' + primary_key + '=' + old_name + '&' + 'year=' + str(old_year))
 
 
 def add_tournament(request):

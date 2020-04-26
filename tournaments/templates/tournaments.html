@@ -43,6 +43,7 @@
 {% endif %}
 <h1>Tournaments</h1>
 {% with primary_key='tournament_name' %}
+{% with pk_2='year' %}
 {% with table_name='tournaments' %}
 <a class="btn btn-success" href="/{{table_name}}/add">Add Tournament</a><br>
 <table class="table">
@@ -61,7 +62,7 @@
         <tr>
             {% for column in columns %}
                 {% if column == primary_key %}
-                    <td><a href="/{{table_name}}/edit?{{primary_key}}={% dict_get record column %}">{% dict_get record column %}</a></td>
+                    <td><a href="/{{table_name}}/edit?{{primary_key}}={% dict_get record column %}&{{pk_2}}={% dict_get record pk_2 %}">{% dict_get record column %}</a></td>
                 {% endif %}
                 {% if column != primary_key %}
                     <td>{% dict_get record column %}</td>
@@ -70,6 +71,7 @@
         </tr>
     {% endfor %}
 </table>
+{% endwith %}
 {% endwith %}
 {% endwith %}
 </html>
