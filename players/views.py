@@ -82,7 +82,7 @@ def view_players(request):
         Searches for all records based on query params. returns all records if no query params are present.
     """
     fields_and_params = get_fields_and_params(request.GET)
-    pk_val_query = "SELECT " + primary_key + " FROM " + table_name + ' NATURAL JOIN ' + ' NATURAL JOIN '.join(alt_tables.keys())
+    pk_val_query = "SELECT DISTINCT " + primary_key + " FROM " + table_name + ' NATURAL JOIN ' + ' NATURAL JOIN '.join(alt_tables.keys())
 
     if len(fields_and_params) != 0:
         pk_val_query += " WHERE " + " AND ".join(fields_and_params.keys())
@@ -109,7 +109,7 @@ def view_individual(request):
         Gives a view of the person's full set of attributes
     """
     fields_and_params = get_fields_and_params(request.GET)
-    pk_val_query = "SELECT " + primary_key + " FROM " + table_name + ' NATURAL JOIN ' + ' NATURAL JOIN '.join(
+    pk_val_query = "SELECT DISTINCT " + primary_key + " FROM " + table_name + ' NATURAL JOIN ' + ' NATURAL JOIN '.join(
         alt_tables.keys())
 
     if len(fields_and_params) != 0:
@@ -142,7 +142,7 @@ def edit_player(request):
         when user clicks submit send all of the values in the update statement. Name cannot be changed.
     """
     fields_and_params = get_fields_and_params(request.GET)
-    pk_val_query = "SELECT " + primary_key + " FROM " + table_name + ' NATURAL JOIN ' + ' NATURAL JOIN '.join(
+    pk_val_query = "SELECT DISTINCT " + primary_key + " FROM " + table_name + ' NATURAL JOIN ' + ' NATURAL JOIN '.join(
         alt_tables.keys())
 
     if len(fields_and_params) != 0:
@@ -185,14 +185,30 @@ def edit_player(request):
             all_performed = do_sql(query, params)
 
             for alt_table_name, table_info in alt_tables.items():
-                alt_dict = {k: v for k, v in fields_and_params.items() if k.split(" ")[0] in table_info['table_columns']}
-                query = "UPDATE " + alt_table_name
-                query += " SET " + ", ".join(alt_dict.keys()) \
-                         + " WHERE " + primary_key + " = %s;"
-                params = list(alt_dict.values())
-                params.append(old_pk_val)
-                if not do_sql(query, params):
-                    all_performed = False
+                alt_dict = {k: v for k, v in fields_and_params.items() if
+                            k.split(" ")[0] in table_info['table_columns']}
+
+                if alt_table_name == 'player_positions':
+                    query = "DELETE FROM " + alt_table_name + " WHERE long_name = %s;"
+                    all_performed = do_sql(query, [old_pk_val])
+
+                    positions = alt_dict['position = %s']
+                    position_list = positions.split(",")
+
+                    for position in position_list:
+                        query = "INSERT INTO " + alt_table_name + " VALUES (%s, %s);"
+                        params = [new_pk_val, position.strip()]
+                        if not do_sql(query, params):
+                            all_performed = False
+
+                else:
+                    query = "UPDATE " + alt_table_name
+                    query += " SET " + ", ".join(alt_dict.keys()) \
+                             + " WHERE " + primary_key + " = %s;"
+                    params = list(alt_dict.values())
+                    params.append(old_pk_val)
+                    if not do_sql(query, params):
+                        all_performed = False
 
             if all_performed:
                 return redirect('/' + table_name + '/view_individual?' + primary_key + '=' + new_pk_val)
