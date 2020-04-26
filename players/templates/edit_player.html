@@ -1,13 +1,44 @@
+{% load static %}
+
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<!-- <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}"> -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
 <!DOCTYPE html>
 {% load players_extras %}
 <html lang="en">
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <ul class="nav navbar-nav">
+            <li><a href="/">Home</a></li>
+            <li><a href="/leagues/view">Leagues</a></li>
+            <li><a href="/teams/view_club_teams">Club Teams</a></li>
+            <li><a href="/teams/view_national_teams">National Teams</a></li>
+            <li><a href="/players/view">Players</a></li>
+            <li><a href="/coaches/view">Coaches</a></li>
+            <li><a href="/favorite_players/view">Fav. Players</a></li>
+            <li><a href="/favorite_teams/view">Fav. Teams</a></li>
+            {% if request.session.user %}
+            <li><a href="{% url 'logout' %}">Log out</a></li>
+            {% endif %}
+          </ul>
+  </div><!-- /.container-fluid -->
+</nav>
+{% for message in messages %}
+    {% if 'error' in message.tags %}
+        <div class="alert alert-warning">
+            <a class="close" href="{% url 'view_favorite_players' %}" data-dismiss="alert">×</a>
+                {{ message }}
+        </div>
+    {% endif %}
+{% endfor %}
 <h1>Edit Player</h1>
 {% with primary_key='long_name' %}
 {% with table_name='players' %}
 <form name="edit{{table_name}}" method="POST" action="/{{table_name}}/edit?{{primary_key}}={% dict_get params primary_key %}"> {% csrf_token %}
     {% for column in columns %}
         <label for="{{column}}">{{column}}</label>
-        <input type="text" id="{{column}}" name="{{column}}" placeholder="{{column}}" size="10" value="{% dict_get record column %}">
+        <input type="text" id="{{column}}" name="{{column}}" placeholder="{{column}}" value="{% dict_get record column %}">
         <br>
     {% endfor %}
     <a href="javascript:document.edit{{table_name}}.submit()">Submit</a>

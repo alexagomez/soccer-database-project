@@ -2,15 +2,14 @@
 
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <!-- <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}"> -->
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <!DOCTYPE html>
 {% load players_extras %}
 <script>
     function searchRedirect() {
-        var columns = ['long_name', 'age', 'dob', 'height_cm', 'weight_kg', 'nationality', 'passing', 'defending',
-                       'shooting', 'dribbling', 'pace', 'overall', 'team_jersey_number', 'preferred_foot', 'wage_eur',
-                       'position', 'club_team', 'national_team'];
+        var columns = ['long_name', 'age', 'dob', 'height_cm', 'weight_kg', 'nationality', 'overall',
+                       'team_jersey_number', 'preferred_foot', 'wage_eur', 'position', 'club_team', 'national_team'];
         var redirectParams = [];
         for (var i = 0; i < columns.length; i++) {
             var searchVal = document.getElementById(columns[i]).value;
@@ -22,6 +21,23 @@
     }
 </script>
 <html lang="en">
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <ul class="nav navbar-nav">
+            <li><a href="/">Home</a></li>
+            <li><a href="/leagues/view">Leagues</a></li>
+            <li><a href="/teams/view_club_teams">Club Teams</a></li>
+            <li><a href="/teams/view_national_teams">National Teams</a></li>
+            <li><a href="/players/view">Players</a></li>
+            <li><a href="/coaches/view">Coaches</a></li>
+            <li><a href="/favorite_players/view">Fav. Players</a></li>
+            <li><a href="/favorite_teams/view">Fav. Teams</a></li>
+            {% if request.session.user %}
+            <li><a href="{% url 'logout' %}">Log out</a></li>
+            {% endif %}
+          </ul>
+  </div><!-- /.container-fluid -->
+</nav>
 {% if request.session.user %}
     <h1>hello, {{request.session.user}}</h1>
 {% endif %}
@@ -44,7 +60,7 @@
         <tr>
             {% for column in columns %}
                 {% if column == primary_key %}
-                    <td><a href="/{{table_name}}/edit?{{primary_key}}={% dict_get record column %}">{% dict_get record column %}</a></td>
+                    <td><a href="/{{table_name}}/view_individual?{{primary_key}}={% dict_get record column %}">{% dict_get record column %}</a></td>
                 {% endif %}
                 {% if column != primary_key %}
                     <td>{% dict_get record column %}</td>

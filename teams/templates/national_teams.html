@@ -4,10 +4,10 @@
 <!-- <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}"> -->
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <!DOCTYPE html>
-{% load club_teams_extras %}
+{% load teams_extras %}
 <script>
     function searchRedirect() {
-        var columns = ['name', 'payroll', 'league'];
+        var columns = ['name', 'num_champs', 'num_wins', 'num_losses', 'num_ties', 'num_world_cups'];
         var redirectParams = [];
         for (var i = 0; i < columns.length; i++) {
             var searchVal = document.getElementById(columns[i]).value;
@@ -19,12 +19,29 @@
     }
 </script>
 <html lang="en">
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <ul class="nav navbar-nav">
+            <li><a href="/">Home</a></li>
+            <li><a href="/leagues/view">Leagues</a></li>
+            <li><a href="/teams/view_club_teams">Club Teams</a></li>
+            <li><a href="/teams/view_national_teams">National Teams</a></li>
+            <li><a href="/players/view">Players</a></li>
+            <li><a href="/coaches/view">Coaches</a></li>
+            <li><a href="/favorite_players/view">Fav. Players</a></li>
+            <li><a href="/favorite_teams/view">Fav. Teams</a></li>
+            {% if request.session.user %}
+            <li><a href="{% url 'logout' %}">Log out</a></li>
+            {% endif %}
+          </ul>
+  </div><!-- /.container-fluid -->
+</nav>
 {% if request.session.user %}
     <h1>hello, {{request.session.user}}</h1>
 {% endif %}
-<h1>Club Teams</h1>
+<h1>National Teams</h1>
 {% with primary_key='name' %}
-{% with table_name='club_teams' %}
+{% with table_name='teams' %}
 <table class="table">
     <tr>
         {% for column in columns %}
@@ -41,13 +58,13 @@
         <tr>
             {% for column in columns %}
                 {% if column == primary_key %}
-                    <td><a href="/{{table_name}}/edit?{{primary_key}}={% dict_get record column %}">{% dict_get record column %}</a></td>
+                    <td><a href="/{{table_name}}/edit_national_team?{{primary_key}}={% dict_get record column %}">{% dict_get record column %}</a></td>
                 {% endif %}
                 {% if column != primary_key %}
                     <td>{% dict_get record column %}</td>
                 {% endif %}
             {% endfor %}
-            <td><a class="btn btn-info" href="/{{table_name}}/favorite/{% dict_get record 'name' %}">add to favorites</a></td>
+            <td><a class="btn btn-info" href="/{{table_name}}/favorite/{% dict_get record primary_key %}">add to favorites</a></td>
         </tr>
     {% endfor %}
 </table>

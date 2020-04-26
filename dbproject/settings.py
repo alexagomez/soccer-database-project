@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'club_teams',
     'coaches',
     'players',
     'users',
@@ -52,9 +51,16 @@ INSTALLED_APPS = [
     'favorite_teams',
     'leagues',
     'tournaments',
-    'crispy_forms'
+    'crispy_forms',
+    'teams'
 ]
 
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+]
 
 CRISPY_TEMPLATE_PACK= 'bootstrap4'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True

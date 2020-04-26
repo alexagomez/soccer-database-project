@@ -8,7 +8,7 @@
 {% load favorite_players_extras %}
 <script>
     function searchRedirect() {
-        var columns = ['username', 'player_name'];
+        var columns = ['player_name'];
         var redirectParams = [];
         for (var i = 0; i < columns.length; i++) {
             var searchVal = document.getElementById(columns[i]).value;
@@ -20,6 +20,55 @@
     }
 </script>
 <html lang="en">
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <ul class="nav navbar-nav">
+            <li><a href="/">Home</a></li>
+            <li><a href="/leagues/view">Leagues</a></li>
+            <li><a href="/teams/view_club_teams">Club Teams</a></li>
+            <li><a href="/teams/view_national_teams">National Teams</a></li>
+            <li><a href="/players/view">Players</a></li>
+            <li><a href="/coaches/view">Coaches</a></li>
+            <li><a href="/favorite_players/view">Fav. Players</a></li>
+            <li><a href="/favorite_teams/view">Fav. Teams</a></li>
+            {% if request.session.user %}
+            <li><a href="{% url 'logout' %}">Log out</a></li>
+            {% endif %}
+          </ul>
+  </div><!-- /.container-fluid -->
+</nav>
+    {% for message in messages %}
+    {% if 'success' in message.tags %}
+
+    <div class="alert alert-success">
+        <a class="close" href="{% url 'view_favorite_players' %}" data-dismiss="alert">×</a>
+
+            {{ message }}
+
+    </div>
+{% endif %}
+{% endfor %}
+
+{% for message in messages %}
+{% if 'error' in message.tags %}
+    <div class="alert alert-warning">
+        <a class="close" href="{% url 'view_favorite_players' %}" data-dismiss="alert">×</a>
+
+            {{ message }}
+
+    </div>
+{% endif %}
+{% endfor %}
+{% for message in messages %}
+{% if 'info' in message.tags %}
+    <div class="alert alert-info">
+        <a class="close" href="{% url 'view_favorite_players' %}" data-dismiss="alert">×</a>
+
+            {{ message }}
+
+    </div>
+{% endif %}
+    {% endfor %}
 {% if request.session.user %}
     <h1>hello, {{request.session.user}}</h1>
 {% endif %}
@@ -29,7 +78,9 @@
 <table class="table">
     <tr>
         {% for column in columns %}
-            <input type="text" id="{{column}}" name="{{column}}" placeholder="{{column}}" size="10" value="{% dict_get params column %}">
+            {% if column != 'username' %}
+                <input type="text" id="{{column}}" name="{{column}}" placeholder="{{column}}" size="10" value="{% dict_get params column %}">
+            {% endif %}
         {% endfor %}
     </tr>
     <button id="btn-search" onclick="searchRedirect()">Search</button>
@@ -41,7 +92,11 @@
     {% for record in records %}
         <tr>
             {% for column in columns %}
-                <td>{% dict_get record column %}</td>
+                {% if column == 'player_name' %}
+                    <td><a href="/players/view_individual?long_name={% dict_get record column %}">{% dict_get record column %}</a></td>
+                {% else %}
+                    <td>{% dict_get record column %}</td>
+                {% endif %}
             {% endfor %}
             <td><a class="btn btn-info" href="/{{table_name}}/delete/{% dict_get record 'player_name' %}">delete from favorites</a></td>
         </tr>
