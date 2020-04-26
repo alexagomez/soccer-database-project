@@ -5,8 +5,8 @@ from urllib.parse import unquote
 from django.shortcuts import get_object_or_404, render, redirect
 
 table_name = 'coaches'
-primary_key = 'full_name'
-table_columns = ['full_name','nationality','years_experience','num_championships','num_wins','num_losses','num_ties']
+primary_key = 'long_name'
+table_columns = ['long_name','nationality','years_experience','num_championships','num_wins','num_losses','num_ties']
 
 alt_tables = {
     'plays_or_coaches_for': {
@@ -33,14 +33,12 @@ def do_sql(query, params=[]):
 
 
 def get_fields_and_params(request_dict):
-    fields = []
-    params = []
+    field_to_param = {}
 
     for field in table_columns:
         param = request_dict.get(field)
         if param is not None:
-            fields.append(field + " = %s")
-            params.append(param)
+            field_to_param[field + " = %s"] = param
 
     for table_info in alt_tables.values():
         for field in table_info['table_columns']:
@@ -49,7 +47,7 @@ def get_fields_and_params(request_dict):
                 if param is not None:
                     field_to_param[field + " = %s"] = param
 
-    return fields, params
+    return field_to_param
 
 
 def view_coaches(request):
