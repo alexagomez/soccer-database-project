@@ -10,7 +10,8 @@
 <h1>Edit Team</h1>
 {% with primary_key='name' %}
 {% with table_name='teams' %}
-<form name="edit{{table_name}}" method="POST" action="/{{table_name}}/edit?{{primary_key}}={% dict_get params primary_key %}"> {% csrf_token %}
+{% with team_type='type' %}
+<form name="edit{{table_name}}" method="POST" action="/{{table_name}}/edit_{{type}}_team?{{primary_key}}={% dict_get params primary_key %}"> {% csrf_token %}
     {% for column in columns %}
         <label for="{{column}}">{{column}}</label>
         <input type="text" id="{{column}}" name="{{column}}" placeholder="{{column}}" value="{% dict_get record column %}">
@@ -18,6 +19,7 @@
     {% endfor %}
     <a href="javascript:document.edit{{table_name}}.submit()">Submit</a>
 </form>
+{% endwith %}
 {% endwith %}
 {% endwith %}
 </html>

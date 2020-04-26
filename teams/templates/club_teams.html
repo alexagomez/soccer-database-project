@@ -42,7 +42,7 @@
         <tr>
             {% for column in columns %}
                 {% if column == primary_key %}
-                    <td><a href="/{{table_name}}/edit?{{primary_key}}={% dict_get record column %}">{% dict_get record column %}</a></td>
+                    <td><a href="/{{table_name}}/edit_club_team?{{primary_key}}={% dict_get record column %}">{% dict_get record column %}</a></td>
                 {% endif %}
                 {% if column != primary_key %}
                     <td>{% dict_get record column %}</td>
