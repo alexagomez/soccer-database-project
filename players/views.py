@@ -133,8 +133,6 @@ def view_individual(request):
     return render(request, 'view_individual.html', context)
 
 
-
-
 def edit_player(request):
     """
         Query parameter will just be the player's name. We will look up original values to populate current view and then
@@ -232,7 +230,6 @@ def add_player(request):
 def add_favorite_player(request, long_name):
         query = 'INSERT INTO favorite_players VALUES (%s, %s);'
         params = (request.session["user"], long_name)
-        print('here')
         if do_sql(query, params):
             return redirect(reverse('view_players'))
         else:

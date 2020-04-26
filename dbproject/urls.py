@@ -28,6 +28,7 @@ urlpatterns = [
     path('favorite_players/', include('favorite_players.urls')),
     path('coaches/', include('coaches.urls')),
     path('players/', include('players.urls')),
+    path('teams/', include('teams.urls')),
     path('users/', include('users.urls')),
     path("", login, name="login"),
 ]
