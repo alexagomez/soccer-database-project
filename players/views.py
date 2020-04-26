@@ -59,6 +59,8 @@ failed_columns = []
 
 
 def do_sql(query, params=[]):
+    print(query)
+    print(params)
     with connection.cursor() as cursor:
         try:
             cursor.execute(query, params)
@@ -79,14 +81,14 @@ def get_fields_and_params(request_dict):
     field_to_param = {}
 
     for field in table_columns:
-        param = request_dict.get(field)
+        param = request_dict.get(field, None)
         if param is not None:
             field_to_param[field + " = %s"] = param
 
     for table_info in alt_tables.values():
         for field in table_info['table_columns']:
             if field != primary_key:
-                param = request_dict.get(field)
+                param = request_dict.get(field, None)
                 if param is not None:
                     field_to_param[field + " = %s"] = param
 
@@ -129,7 +131,7 @@ def check_valid_vals(fields_and_params):
 
     for column_name, length in field_restrictions['str'].items():
         val = fields_and_params.get(column_name + " = %s")
-        if val.strip() == "" and column_name not in nullable:
+        if val.strip() == "NULL" and column_name not in nullable:
             failed_columns.append(column_name)
 
         if len(val.strip()) > length:
@@ -137,7 +139,7 @@ def check_valid_vals(fields_and_params):
 
     for column_name, form in field_restrictions['date'].items():
         val = fields_and_params.get(column_name + " = %s")
-        if val is None or val.strip() == "":
+        if val is None or val.strip() == "NULL":
             failed_columns.append(column_name)
 
         try:
@@ -150,6 +152,24 @@ def check_valid_vals(fields_and_params):
         return False
 
     return True
+
+
+def delete_player(request):
+    fields_and_params = get_fields_and_params(request.GET)
+    query = 'DELETE FROM ' + table_name
+
+    if fields_and_params.get(primary_key + " = %s", None) is not None:
+        query += " WHERE " + primary_key + " = %s;"
+        do_sql(query, [fields_and_params.get(primary_key + " = %s")])
+
+    for name in alt_tables.keys():
+        query = 'DELETE FROM ' + name
+
+        if fields_and_params.get(primary_key + " = %s", None) is not None:
+            query += " WHERE " + primary_key + " = %s;"
+            do_sql(query, [fields_and_params.get(primary_key + " = %s")])
+
+    return redirect('/' + table_name + '/view')
 
 
 def view_players(request):
@@ -206,7 +226,6 @@ def view_individual(request):
 
     columns, record = do_sql(query, fields_and_params.values())
     record = combine_multi_values(record, pk_vals, 'position')
-
     context = {'record': record[0], 'columns': columns, 'params': request.GET}
     return render(request, 'view_individual.html', context)
 
@@ -239,8 +258,6 @@ def edit_player(request):
         query += ";"
 
         columns, record = do_sql(query, fields_and_params.values())
-        record = combine_multi_values(record, pk_vals, 'position')
-
         context = {'record': record[0], 'columns': columns, 'params': request.GET}
         return render(request, 'edit_player.html', context)
 
@@ -254,7 +271,6 @@ def edit_player(request):
             messages.error(request, 'Values of the following columns were invalid, please try again! Columns: '
                            + ", ".join(failed_columns))
             return redirect('/' + table_name + '/edit?' + primary_key + '=' + old_pk_val)
-
         if len(fields_and_params) != 0:
             main_dict = {k: v for k, v in fields_and_params.items() if k.split(" ")[0] in table_columns}
             query += " SET " + ", ".join(main_dict.keys()) + " WHERE " + \
@@ -334,6 +350,9 @@ def add_player(request):
             messages.error(request, 'Values of the following columns were invalid, please try again! Columns: '
                            + ", ".join(failed_columns))
             return redirect('/' + table_name + '/add')
+        for key, val in fields_and_params.items():
+            if val == '':
+                fields_and_params[key] = None
         main_dict = {k: v for k, v in fields_and_params.items() if k.split(" ")[0] in table_columns}
         placeholders = ["%s"] * len(main_dict)
         query += ", ".join(placeholders) + ");"

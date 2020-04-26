@@ -42,6 +42,7 @@
 <h1>Club Teams</h1>
 {% with primary_key='name' %}
 {% with table_name='teams' %}
+<a class="btn btn-success" href="/{{table_name}}/add_club_team">Add Club Team</a><br>
 <table class="table">
     <tr>
         {% for column in columns %}

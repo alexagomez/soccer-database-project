@@ -110,6 +110,20 @@ def check_valid_vals(fields_and_params):
     return True
 
 
+def delete_club_team(request):
+    fields_and_params = get_fields_and_params(request.GET)
+    teams_query = 'DELETE FROM ' + table_name
+    club_query = 'DELETE FROM club_teams'
+
+    if fields_and_params.get(primary_key + " = %s", None) is not None:
+        teams_query += " WHERE " + " AND ".join(fields_and_params.keys()) + ";"
+        club_query += " WHERE " + " AND ".join(fields_and_params.keys()) + ";"
+        do_sql(teams_query, [fields_and_params.get(primary_key + " = %s")])
+        do_sql(club_query, [fields_and_params.get(primary_key + " = %s")])
+
+    return redirect('/teams/view_club_teams')
+
+
 def view_club_teams(request):
     """
         Searches for all club team records based on query params. returns all records if no query params are present.
