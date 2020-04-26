@@ -8,7 +8,8 @@
 {% load coaches_extras %}
 <script>
     function searchRedirect() {
-        var columns = ['full_name','nationality','years_experience','num_championships','num_wins','num_losses','num_ties'];
+        var columns = ['full_name','nationality','years_experience','num_championships','num_wins','num_losses','num_ties',
+                       'long_name','club_team', 'national_team'];
         var redirectParams = [];
         for (var i = 0; i < columns.length; i++) {
             var searchVal = document.getElementById(columns[i]).value;
