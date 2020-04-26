@@ -23,7 +23,6 @@ from users.views import login
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('leagues/', include('leagues.urls')),
-    path('club_teams/', include('club_teams.urls')),
     path('favorite_teams/', include('favorite_teams.urls')),
     path('favorite_players/', include('favorite_players.urls')),
     path('coaches/', include('coaches.urls')),
