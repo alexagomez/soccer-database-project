@@ -98,7 +98,7 @@ border-radius: 0.5rem">
             <tr>
                 {% for column in columns %}
                     {% if column == 'team_name' %}
-                        <td><a href="/club_teams/edit?name={% dict_get record column %}">{% dict_get record column %}</a></td>
+                        <td><a href="/teams/edit_club_team?name={% dict_get record column %}">{% dict_get record column %}</a></td>
                     {% else %}
                         <td>{% dict_get record column %}</td>
                     {% endif %}
