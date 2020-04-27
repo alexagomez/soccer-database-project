@@ -134,8 +134,14 @@ def check_valid_vals(fields_and_params):
         if val.strip() == "NULL" and column_name not in nullable:
             failed_columns.append(column_name)
 
-        if len(val.strip()) > length:
-            failed_columns.append(column_name)
+        if column_name != "position":
+            if len(val.strip()) > length:
+                failed_columns.append(column_name)
+        else:
+            val_list = val.split(',')
+            for pos in val_list:
+                if len(pos.strip()) > length:
+                    failed_columns.append(column_name)
 
     for column_name, form in field_restrictions['date'].items():
         val = fields_and_params.get(column_name + " = %s")
@@ -366,15 +372,28 @@ def add_player(request):
         for alt_table_name, table_info in alt_tables.items():
             alt_dict = {k: v for k, v in fields_and_params.items() if k.split(" ")[0] in table_info['table_columns']}
             query = 'INSERT INTO ' + alt_table_name + ' VALUES ('
-            placeholders = ["%s"] * len(alt_dict)
-            query += ", ".join(placeholders) + ");"
-            try:
-                if not do_sql(query, alt_dict.values()):
-                    all_performed = False
-            except IntegrityError as err:
-                messages.error(request, 'Could not update information for the player due to the following error: ' +
-                               str(err))
-                return redirect('/' + table_name + '/add')
+            if alt_table_name == "player_positions":
+                positions = alt_dict['position = %s'].split(",")
+                for position in positions:
+                    query = 'INSERT INTO ' + alt_table_name + ' VALUES ('
+                    query += "'" + alt_dict['long_name = %s'] + "', '" + position + "');"
+                    try:
+                        if not do_sql(query):
+                            all_performed = False
+                    except IntegrityError as err:
+                        messages.error(request, 'Could not update information about player positions due to error: ' +
+                                       str(err))
+                        return redirect('/' + table_name + '/add')
+            else:
+                placeholders = ["%s"] * len(alt_dict)
+                query += ", ".join(placeholders) + ");"
+                try:
+                    if not do_sql(query, alt_dict.values()):
+                        all_performed = False
+                except IntegrityError as err:
+                    messages.error(request, 'Could not update information for the player due to the following error: ' +
+                                   str(err))
+                    return redirect('/' + table_name + '/add')
 
         if all_performed:
             return redirect('/' + table_name + '/view?' + primary_key + '=' + request.POST.get(primary_key))
