@@ -38,8 +38,8 @@ def do_sql_return(query):
 
 def login(request):
     try:
-        if(request.session["user"]):
-            return HttpResponseRedirect(reverse('show_players'))
+        if(request.session["user"] != None):
+            return HttpResponseRedirect(reverse('view_players'))
     except:
         return HttpResponseRedirect(reverse('loginform'))
 
