@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 {% load coaches_extras %}
 <html lang="en">
 <nav class="navbar navbar-default">
@@ -23,7 +26,7 @@
   </div><!-- /.container-fluid -->
 </nav>
 <h1>Edit Coach</h1>
-{% with primary_key='full_name' %}
+{% with primary_key='long_name' %}
 {% with table_name='coaches' %}
 <form name="edit{{table_name}}" method="POST" action="/{{table_name}}/edit?{{primary_key}}={% dict_get params primary_key %}"> {% csrf_token %}
     {% for column in columns %}
@@ -31,7 +34,8 @@
         <input type="text" id="{{column}}" name="{{column}}" placeholder="{{column}}" size="10" value="{% dict_get record column %}">
         <br>
     {% endfor %}
-    <a href="javascript:document.edit{{table_name}}.submit()">Submit</a>
+    <a class="btn btn-success" href="javascript:document.edit{{table_name}}.submit()">Submit</a>
+    <a class="btn btn-danger" href="/{{table_name}}/delete?{{primary_key}}={% dict_get params primary_key %}">Delete</a>
 </form>
 {% endwith %}
 {% endwith %}

@@ -1,17 +1,13 @@
-<!DOCTYPE html>
+{% load static %}
 
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-
+<!-- <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}"> -->
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 
-{% load coaches_extras %}
-<html lang="en">
+<!DOCTYPE html>
 <nav class="navbar navbar-default">
     <div class="container-fluid">
       <ul class="nav navbar-nav">
-        {% if request.session.user %}
-                    <li><h3>hello, {{request.session.user}}</h3></li>
-                {% endif %}
         <li><a href="/">Home</a></li>
         <li><a href="/leagues/view">Leagues</a></li>
         <li><a href="/teams/view_club_teams">Club Teams</a></li>
@@ -27,17 +23,8 @@
       </ul>
   </div><!-- /.container-fluid -->
 </nav>
-<h1>Add Coach</h1>
-{% with primary_key='long_name' %}
-{% with table_name='coaches' %}
-<form name="add{{table_name}}" method="POST" action="/{{table_name}}/add"> {% csrf_token %}
-    {% for column in columns %}
-        <label for="{{column}}">{{column}}</label>
-        <input type="text" id="{{column}}" name="{{column}}" placeholder="{{column}}" size="10">
-        <br>
-    {% endfor %}
-    <a class="btn btn-success" href="javascript:document.add{{table_name}}.submit()">Submit</a>
-</form>
-{% endwith %}
-{% endwith %}
+
+<html lang="en">
+   <h1>Need to log in or sign up to see favorites.</h1>
+   <a class="btn btn-success" href="/">Log In or Sign Up</a>
 </html>

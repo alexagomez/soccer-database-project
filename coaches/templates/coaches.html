@@ -45,6 +45,7 @@
 <h1>Coaches</h1>
 {% with primary_key='long_name' %}
 {% with table_name='coaches' %}
+<a class="btn btn-success" href="/{{table_name}}/add">Add Coach</a><br>
 <table class="table">
     <tr>
         {% for column in columns %}
