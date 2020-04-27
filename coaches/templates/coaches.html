@@ -1,10 +1,12 @@
 {% load static %}
 
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<!-- <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}"> -->
+<link rel="stylesheet" type="text/css" href="{% static 'css/individual.css' %}">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 
 <!DOCTYPE html>
+<html lang="en">
+<div class="container">
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <ul class="nav navbar-nav">
@@ -41,11 +43,13 @@
         document.location.search = redirectParams.join("&");
     }
 </script>
-<html lang="en">
-<h1>Coaches</h1>
+
+    
+<span style="display: flex; flex: 1; width: 20%; flex-direction: row; justify-content: space-between; align-items: center"><h1 style="color: white">Coaches</h1><a style="height: 30px; width: 100px" class="btn btn-success" href="/coaches/add">Add Coach</a></span>
 {% with primary_key='long_name' %}
 {% with table_name='coaches' %}
-<a class="btn btn-success" href="/{{table_name}}/add">Add Coach</a><br>
+<div class="table-responsive" style="width: 80%; height: 75%; background-color: white; padding: 15px; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+border-radius: 0.5rem">
 <table class="table">
     <tr>
         {% for column in columns %}
@@ -73,4 +77,6 @@
 </table>
 {% endwith %}
 {% endwith %}
+</div>
+</div>
 </html>

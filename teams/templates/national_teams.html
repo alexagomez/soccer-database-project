@@ -1,7 +1,7 @@
 {% load static %}
 
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<!-- <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}"> -->
+<link rel="stylesheet" type="text/css" href="{% static 'css/individual.css' %}">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <!DOCTYPE html>
 {% load teams_extras %}
@@ -19,13 +19,14 @@
     }
 </script>
 <html lang="en">
+    <div class="container">
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <ul class="nav navbar-nav">
-            <li><a href="/">Home</a></li>
             {% if request.session.user %}
                     <li><h3>hello, {{request.session.user}}</h3></li>
                 {% endif %}
+            <li><a href="/">Home</a></li>
             <li><a href="/leagues/view">Leagues</a></li>
             <li><a href="/teams/view_club_teams">Club Teams</a></li>
             <li><a href="/teams/view_national_teams">National Teams</a></li>
@@ -40,10 +41,11 @@
           </ul>
   </div><!-- /.container-fluid -->
 </nav>
-<h1>National Teams</h1>
+<span style="display: flex; flex: 1; width: 30%; flex-direction: row; justify-content: space-between; align-items: center"><h1 style="color: white">National Teams</h1><a style="height: 30px; width: 150px" class="btn btn-success" href="/teams/add_national_team">Add National Team</a></span>
 {% with primary_key='name' %}
 {% with table_name='teams' %}
-<a class="btn btn-success" href="/{{table_name}}/add_national_team">Add National Team</a><br>
+<div class="table-responsive" style="height: 75%; width: 80%; background-color: white; padding: 15px; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+border-radius: 0.5rem">
 <table class="table">
     <tr>
         {% for column in columns %}
@@ -72,4 +74,6 @@
 </table>
 {% endwith %}
 {% endwith %}
+</div>
+</div>
 </html>

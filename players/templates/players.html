@@ -43,11 +43,10 @@
           </ul>
   </div><!-- /.container-fluid -->
 </nav>
-<h1>Players</h1>
+<span style="display: flex; flex: 1; width: 20%; flex-direction: row; justify-content: space-between; align-items: center"><h1 style="color: white">Players</h1><a style="height: 30px; width: 100px" class="btn btn-success" href="/{{table_name}}/add">Add Player</a></span>
 {% with primary_key='long_name' %}
 {% with table_name='players' %}
-<a class="btn btn-success" href="/{{table_name}}/add">Add Player</a><br>
-<div class="table-responsive" style="background-color: white; padding: 15px; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+<div class="table-responsive" style="height: 75%; background-color: white; padding: 15px; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 border-radius: 0.5rem">
 <table class="table">
     <tr>

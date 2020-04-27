@@ -1,8 +1,8 @@
 {% load static %}
 
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<!-- <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}"> -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'css/individual.css' %}">
 
 <!DOCTYPE html>
 {% load tournaments_extras %}
@@ -20,32 +20,34 @@
     }
 </script>
 <html lang="en">
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
-        <ul class="nav navbar-nav">
-            <li><a href="/">Home</a></li>
-            <li><a href="/leagues/view">Leagues</a></li>
-            <li><a href="/teams/view_club_teams">Club Teams</a></li>
-            <li><a href="/teams/view_national_teams">National Teams</a></li>
-            <li><a href="/players/view">Players</a></li>
-            <li><a href="/coaches/view">Coaches</a></li>
-            <li><a href="/tournaments/view">Tournaments</a></li>
-            <li><a href="/favorite_players/view">Fav. Players</a></li>
-            <li><a href="/favorite_teams/view">Fav. Teams</a></li>
-            {% if request.session.user %}
-            <li><a href="{% url 'logout' %}">Log out</a></li>
-            {% endif %}
-          </ul>
-  </div><!-- /.container-fluid -->
-</nav>
-{% if request.session.user %}
-    <h1>hello, {{request.session.user}}</h1>
-{% endif %}
-<h1>Tournaments</h1>
+    <div class="container">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <ul class="nav navbar-nav">
+                {% if request.session.user %}
+                    <li><h3>hello, {{request.session.user}}</h3></li>
+                {% endif %}
+                <li><a href="/">Home</a></li>
+                <li><a href="/leagues/view">Leagues</a></li>
+                <li><a href="/teams/view_club_teams">Club Teams</a></li>
+                <li><a href="/teams/view_national_teams">National Teams</a></li>
+                <li><a href="/players/view">Players</a></li>
+                <li><a href="/coaches/view">Coaches</a></li>
+                <li><a href="/favorite_players/view">Fav. Players</a></li>
+                <li><a href="/favorite_players/view">Fav. Players</a></li>
+                <li><a href="/favorite_teams/view">Fav. Teams</a></li>
+                {% if request.session.user %}
+                <li><a href="{% url 'logout' %}">Log out</a></li>
+                {% endif %}
+              </ul>
+      </div><!-- /.container-fluid -->
+    </nav>
+    <span style="display: flex; flex: 1; width: 25%; flex-direction: row; justify-content: space-between; align-items: center"><h1 style="color: white">Tournaments</h1><a class="btn btn-success" href="/{{table_name}}/add">Add Tournament</a></span>
 {% with primary_key='tournament_name' %}
 {% with pk_2='year' %}
 {% with table_name='tournaments' %}
-<a class="btn btn-success" href="/{{table_name}}/add">Add Tournament</a><br>
+<div class="table-responsive" style="width: 80%; height: 75%;  background-color: white; padding: 15px; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+border-radius: 0.5rem">
 <table class="table">
     <tr>
         {% for column in columns %}
@@ -73,5 +75,6 @@
 </table>
 {% endwith %}
 {% endwith %}
-{% endwith %}
+</div>
+</div>
 </html>
