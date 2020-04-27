@@ -30,7 +30,6 @@
         <br>
     {% endfor %}
     <a class="btn btn-success" href="javascript:document.edit{{table_name}}.submit()">Submit</a>
-    <a class="btn btn-danger" href="/{{table_name}}/delete?{{primary_key}}={% dict_get params primary_key %}">Delete</a>
 </form>
 {% endwith %}
 {% endwith %}

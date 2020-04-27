@@ -1,6 +1,7 @@
 from django.db import connection
 from django.db.utils import OperationalError
 from urllib.parse import unquote
+import copy
 
 from django.shortcuts import get_object_or_404, render, redirect
 
@@ -48,6 +49,23 @@ def get_fields_and_params(request_dict):
                     field_to_param[field + " = %s"] = param
 
     return field_to_param
+
+def delete_coach(request):
+    fields_and_params = get_fields_and_params(request.GET)
+    query = 'DELETE FROM ' + table_name
+
+    if fields_and_params.get(primary_key + " = %s", None) is not None:
+        query += " WHERE " + primary_key + " = %s;"
+        do_sql(query, [fields_and_params.get(primary_key + " = %s")])
+
+    for name in alt_tables.keys():
+        query = 'DELETE FROM ' + name
+
+        if fields_and_params.get(primary_key + " = %s", None) is not None:
+            query += " WHERE " + primary_key + " = %s;"
+            do_sql(query, [fields_and_params.get(primary_key + " = %s")])
+
+    return redirect('/' + table_name + '/view')
 
 
 def view_coaches(request):
