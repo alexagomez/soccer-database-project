@@ -60,7 +60,7 @@ def view_favorite_teams(request):
                 context = {'records': records, 'columns': columns, 'params': request.GET}
                 return render(request, table_name + '.html', context)
             else:
-                messages.error(request, 'Could not find any players with that name, please try again')
+                messages.error(request, 'Could not find any favorite teams, please try to add some and then come back.')
                 context = {'records': records, 'columns': columns, 'params': request.GET}
                 return render(request, table_name + '.html', context)
         except:
