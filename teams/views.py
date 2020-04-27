@@ -411,12 +411,15 @@ def edit_national_team(request):
 
 
 def add_favorite_team(request, long_name):
-    query = 'INSERT INTO favorite_teams VALUES (%s, %s);'
-    params = (request.session["user"], long_name)
     try:
-        if do_sql(query, params):
-            return redirect(reverse('view_club_teams'))
-        else:
-            return redirect(reverse('add_favorite'))
-    except IntegrityError as err:
-        return redirect('/favorite_teams/view')
+        query = 'INSERT INTO favorite_teams VALUES (%s, %s);'
+        params = (request.session["user"], long_name)
+        try:
+            if do_sql(query, params):
+                return redirect(reverse('view_club_teams'))
+            else:
+                return redirect(reverse('add_favorite'))
+        except IntegrityError as err:
+            return redirect('/favorite_teams/view')
+    except:
+        return redirect('/users/loginform')

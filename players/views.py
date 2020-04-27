@@ -383,6 +383,7 @@ def add_player(request):
 
 
 def add_favorite_player(request, long_name):
+    try:
         query = 'INSERT INTO favorite_players VALUES (%s, %s);'
         params = (request.session["user"], long_name)
         try:
@@ -392,3 +393,5 @@ def add_favorite_player(request, long_name):
                 return redirect(reverse('add_favorite'))
         except IntegrityError as err:
             return redirect('/favorite_players/view')
+    except:
+        return redirect('/users/loginform')
