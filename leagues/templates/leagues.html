@@ -42,9 +42,10 @@
           </ul>
   </div><!-- /.container-fluid -->
 </nav>
-<span style="display: flex; flex: 1; width: 18%; flex-direction: row; justify-content: space-between; align-items: center"><h1 style="color: white">Leagues</h1><a style="height: 30px; width: 100px" class="btn btn-success" href="/{{table_name}}/add">Add League</a></span>
+
 {% with primary_key='league_name' %}
 {% with table_name='leagues' %}
+<span style="display: flex; flex: 1; width: 18%; flex-direction: row; justify-content: space-between; align-items: center"><h1 style="color: white">Leagues</h1><a style="height: 30px; width: 100px" class="btn btn-success" href="/{{table_name}}/add">Add League</a></span>
 <div class="table-responsive" style="width: 80%; height: 75%; background-color: white; padding: 15px; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 border-radius: 0.5rem">
 <table class="table">

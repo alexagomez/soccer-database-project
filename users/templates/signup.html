@@ -4,7 +4,8 @@
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'css/signup.css' %}">
-<nav class="navbar navbar-default">
+    <div class="container">
+    <nav class="navbar navbar-default">
     <div class="container-fluid">
         <ul class="nav navbar-nav">
             <li><a href="/">Home</a></li>
@@ -54,7 +55,7 @@
     </div>
 {% endif %}
     {% endfor %}
-    <div class="container">
+    <div class="sub-container">
     <h1 class="heading">Sign Up</h1><br>
 <form method="post">
     {% csrf_token %}
@@ -63,5 +64,6 @@
 </form>
 <div class="login-help">
     <div class="text-center">Already have an account? <a href="{% url 'loginform' %}">Log in</a></div>
+</div>
 </div>
 </div>
