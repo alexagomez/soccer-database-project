@@ -1,15 +1,19 @@
 {% load static %}
 
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<!-- <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}"> -->
+<link rel="stylesheet" type="text/css" href="{% static 'css/individual.css' %}">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 
 <!DOCTYPE html>
 {% load players_extras %}
 <html lang="en">
+    <div class="container">
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <ul class="nav navbar-nav">
+            {% if request.session.user %}
+                    <li><h3>hello, {{request.session.user}}</h3></li>
+                {% endif %}
             <li><a href="/">Home</a></li>
             <li><a href="/leagues/view">Leagues</a></li>
             <li><a href="/teams/view_club_teams">Club Teams</a></li>
@@ -25,15 +29,38 @@
           </ul>
   </div><!-- /.container-fluid -->
 </nav>
-{% if request.session.user %}
-    <h1>hello, {{request.session.user}}</h1>
-{% endif %}
 {% with primary_key='long_name' %}
+{% with stats='passing defending shooting dribbling pace overall' %}
+{% with keeper_stats='diving kicking positioning reflexes speed overall' %}
+{% with info='age dob height_cm weight_kg nationality team_jersey_number preferred_foot wage_eur position club_team national_team' %}
 {% with table_name='players' %}
-<h1>{% dict_get record primary_key %}</h1>
-<a class="btn btn-success" href="/{{table_name}}/favorite/{% dict_get record 'long_name' %}">Favorite Player</a>
-<a class="btn btn-info" href="/{{table_name}}/edit?{{primary_key}}={% dict_get record primary_key %}">Edit Player</a><br>
-<table class="table">
+<h1 class="header-primary">{% dict_get record primary_key %}</h1>
+<div class="item-container">
+<div class="info-container">
+    <h3 style="align-self: center;">Player Information</h3>
+    {% for column in columns %}
+            {% if column in info.split %}
+                <div class="info">{{column}}: {% dict_get record column %}</div>
+            {% endif %}
+{% endfor %}
+</div>
+<div style="flex: .05"></div>
+<div class="stats-container">
+    <h3 style="align-self: center;">Player Stats</h3>
+    {% for column in columns %}
+            {% if column in stats.split %}
+                <div class="stats">{{column}}: {% dict_get record column %}</div>
+            {% endif %}
+{% endfor %}
+</div>
+</div>
+<div class="buttons">
+    <a class="btn btn-success" href="/{{table_name}}/favorite/{% dict_get record 'long_name' %}">Favorite Player</a>
+    <a class="btn btn-danger" href="/{{table_name}}/delete?{{primary_key}}={% dict_get record primary_key %}">Delete Player</a>
+    <a class="btn btn-info" href="/{{table_name}}/edit?{{primary_key}}={% dict_get record primary_key %}">Edit Player</a>
+</div>
+
+<!-- <table class="table">
     <tr>
         {% for column in columns %}
             {% if column != primary_key %}
@@ -48,7 +75,11 @@
             {% endif %}
         {% endfor %}
     </tr>
-</table>
+</table> -->
 {% endwith %}
 {% endwith %}
+{% endwith %}
+{% endwith %}
+{% endwith %}
+</div>
 </html>

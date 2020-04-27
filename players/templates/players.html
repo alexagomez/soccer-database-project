@@ -1,7 +1,7 @@
 {% load static %}
 
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<!-- <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}"> -->
+<link rel="stylesheet" type="text/css" href="{% static 'css/individual.css' %}">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <!DOCTYPE html>
@@ -21,9 +21,13 @@
     }
 </script>
 <html lang="en">
+    <div class="container">
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <ul class="nav navbar-nav">
+            {% if request.session.user %}
+                    <li><h3>hello, {{request.session.user}}</h3></li>
+                {% endif %}
             <li><a href="/">Home</a></li>
             <li><a href="/leagues/view">Leagues</a></li>
             <li><a href="/teams/view_club_teams">Club Teams</a></li>
@@ -39,13 +43,12 @@
           </ul>
   </div><!-- /.container-fluid -->
 </nav>
-{% if request.session.user %}
-    <h1>hello, {{request.session.user}}</h1>
-{% endif %}
 <h1>Players</h1>
 {% with primary_key='long_name' %}
 {% with table_name='players' %}
 <a class="btn btn-success" href="/{{table_name}}/add">Add Player</a><br>
+<div class="table-responsive" style="background-color: white; padding: 15px; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+border-radius: 0.5rem">
 <table class="table">
     <tr>
         {% for column in columns %}
@@ -72,6 +75,8 @@
         </tr>
     {% endfor %}
 </table>
+</div>
 {% endwith %}
 {% endwith %}
+</div>
 </html>

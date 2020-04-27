@@ -23,6 +23,9 @@
     <div class="container-fluid">
         <ul class="nav navbar-nav">
             <li><a href="/">Home</a></li>
+            {% if request.session.user %}
+                    <li><h3>hello, {{request.session.user}}</h3></li>
+                {% endif %}
             <li><a href="/leagues/view">Leagues</a></li>
             <li><a href="/teams/view_club_teams">Club Teams</a></li>
             <li><a href="/teams/view_national_teams">National Teams</a></li>
@@ -37,9 +40,6 @@
           </ul>
   </div><!-- /.container-fluid -->
 </nav>
-{% if request.session.user %}
-    <h1>hello, {{request.session.user}}</h1>
-{% endif %}
 <h1>National Teams</h1>
 {% with primary_key='name' %}
 {% with table_name='teams' %}
